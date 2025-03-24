@@ -76,10 +76,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel` (
   `hotel_id` CHAR(8) NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
   `price` DECIMAL(7,2) NOT NULL,
   `checkin_date` DATE NOT NULL,
   `checkout_date` DATE NOT NULL,
   `address` VARCHAR(100) NOT NULL,
+  `latitude` DECIMAL(9,6) NOT NULL,
+  `longitude` DECIMAL(9,6) NOT NULL,
   `board_type` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`hotel_id`))
 ENGINE = InnoDB;

@@ -36,6 +36,7 @@ public class Hotel {
     private String address;
 
     @Column(name = "board_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private BoardType boardType;
 
 

@@ -21,13 +21,9 @@ public class PointOfInterest {
     @Column(name = "longitude", nullable = false)
     private BigDecimal longitude;
 
-    @ManyToMany
-    @JoinTable(
-            name = "pointOfInterest_activityType",
-            joinColumns = @JoinColumn(name = "poi_id"),
-            inverseJoinColumns = @JoinColumn(name = "activity_type_id")
-    )
-    private Set<ActivityType> category;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    private ActivityType activityType;
 
     public int getId() {
         return id;
@@ -59,5 +55,13 @@ public class PointOfInterest {
 
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
+    }
+
+    public ActivityType getActivityType() {
+        return activityType;
+    }
+
+    public void setActivityType(ActivityType activityType) {
+        this.activityType = activityType;
     }
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PointOfInterestRepository extends JpaRepository<PointOfInterest, Integer> {
-
+    //add filtering by category and price
 }

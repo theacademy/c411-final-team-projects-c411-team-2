@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-@Repository
 public interface PointOfInterestService extends JpaRepository<PointOfInterest, Integer> {
     public List<PointOfInterest> searchPointsOfInterest(
             String city,

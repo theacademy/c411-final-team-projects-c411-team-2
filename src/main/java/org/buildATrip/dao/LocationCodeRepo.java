@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LocationCodeRepo extends JpaRepository<LocationCode, String> {
-
     // Find a location by city name
     LocationCode findByCityNameIgnoreCase(String cityName);
 }

@@ -53,6 +53,9 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`flight` (
   `origin_code` CHAR(3) NOT NULL,
   `dest_code` CHAR(3) NOT NULL,
   PRIMARY KEY (`flight_id`),
+  INDEX `fk_flight_flight_idx` (`next_flight_id` ASC) VISIBLE,
+  INDEX `fk_flight_locationcode1_idx` (`origin_code` ASC) VISIBLE,
+  INDEX `fk_flight_locationcode2_idx` (`dest_code` ASC) VISIBLE,
   CONSTRAINT `fk_flight_flight`
     FOREIGN KEY (`next_flight_id`)
     REFERENCES `travel-itinerary`.`flight` (`flight_id`)
@@ -72,6 +75,17 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `travel-itinerary`.`boardType`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `travel-itinerary`.`boardType` (
+  `id` INT NOT NULL,
+  `name` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `travel-itinerary`.`hotel`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel` (
@@ -81,10 +95,17 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel` (
   `checkin_date` DATE NOT NULL,
   `checkout_date` DATE NOT NULL,
   `address` VARCHAR(100) NOT NULL,
+  `board_type` VARCHAR(15) NOT NULL,
   `latitude` DECIMAL(9,6) NOT NULL,
   `longitude` DECIMAL(9,6) NOT NULL,
-  `board_type` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`hotel_id`))
+  `boardType_id` INT NOT NULL,
+  PRIMARY KEY (`hotel_id`),
+  INDEX `fk_hotel_boardType1_idx` (`boardType_id` ASC) VISIBLE,
+  CONSTRAINT `fk_hotel_boardType1`
+    FOREIGN KEY (`boardType_id`)
+    REFERENCES `travel-itinerary`.`boardType` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -114,26 +135,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`activity_activityTypes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`activity_activityTypes` (
-  `activity_id` INT NOT NULL,
-  `activity_type_id` INT NOT NULL,
-  PRIMARY KEY (`activity_id`, `activity_type_id`),
-  CONSTRAINT `fk_activity_has_activityTypes_activity1`
-    FOREIGN KEY (`activity_id`)
-    REFERENCES `travel-itinerary`.`activity` (`activity_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_activity_has_activityTypes_activityTypes1`
-    FOREIGN KEY (`activity_type_id`)
-    REFERENCES `travel-itinerary`.`activityTypes` (`activity_type_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `travel-itinerary`.`pointOfInterest`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary`.`pointOfInterest` (
@@ -152,6 +153,8 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`pointOfInterest_activityTypes` (
   `activity_type_id` INT NOT NULL,
   `poi_id` INT NOT NULL,
   PRIMARY KEY (`activity_type_id`, `poi_id`),
+  INDEX `fk_activityTypes_has_pointOfInterest_pointOfInterest1_idx` (`poi_id` ASC) VISIBLE,
+  INDEX `fk_activityTypes_has_pointOfInterest_activityTypes1_idx` (`activity_type_id` ASC) VISIBLE,
   CONSTRAINT `fk_activityTypes_has_pointOfInterest_activityTypes1`
     FOREIGN KEY (`activity_type_id`)
     REFERENCES `travel-itinerary`.`activityTypes` (`activity_type_id`)
@@ -179,7 +182,8 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary` (
   `start_date` DATE NOT NULL,
   `end_date` DATE NOT NULL,
   `user_id` INT NOT NULL,
-  PRIMARY KEY (`itinerary_id`, `user_id`),
+  PRIMARY KEY (`itinerary_id`),
+  INDEX `fk_itinerary_user1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_itinerary_user1`
     FOREIGN KEY (`user_id`)
     REFERENCES `travel-itinerary`.`user` (`id`)
@@ -195,6 +199,8 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary_flight` (
   `itinerary_id` INT NOT NULL,
   `flight_id` INT NOT NULL,
   PRIMARY KEY (`itinerary_id`, `flight_id`),
+  INDEX `fk_itinerary_has_flight_flight1_idx` (`flight_id` ASC) VISIBLE,
+  INDEX `fk_itinerary_has_flight_itinerary1_idx` (`itinerary_id` ASC) VISIBLE,
   CONSTRAINT `fk_itinerary_has_flight_itinerary1`
     FOREIGN KEY (`itinerary_id`)
     REFERENCES `travel-itinerary`.`itinerary` (`itinerary_id`)
@@ -215,6 +221,8 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel_itinerary` (
   `hotel_id` CHAR(8) NOT NULL,
   `itinerary_id` INT NOT NULL,
   PRIMARY KEY (`hotel_id`, `itinerary_id`),
+  INDEX `fk_hotel_has_itinerary_itinerary1_idx` (`itinerary_id` ASC) VISIBLE,
+  INDEX `fk_hotel_has_itinerary_hotel1_idx` (`hotel_id` ASC) VISIBLE,
   CONSTRAINT `fk_hotel_has_itinerary_hotel1`
     FOREIGN KEY (`hotel_id`)
     REFERENCES `travel-itinerary`.`hotel` (`hotel_id`)
@@ -235,6 +243,8 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`activity_itinerary` (
   `activity_id` INT NOT NULL,
   `itinerary_id` INT NOT NULL,
   PRIMARY KEY (`activity_id`, `itinerary_id`),
+  INDEX `fk_activity_has_itinerary_itinerary1_idx` (`itinerary_id` ASC) VISIBLE,
+  INDEX `fk_activity_has_itinerary_activity1_idx` (`activity_id` ASC) VISIBLE,
   CONSTRAINT `fk_activity_has_itinerary_activity1`
     FOREIGN KEY (`activity_id`)
     REFERENCES `travel-itinerary`.`activity` (`activity_id`)
@@ -255,6 +265,8 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary_pointOfInterest` (
   `itinerary_id` INT NOT NULL,
   `poi_id` INT NOT NULL,
   PRIMARY KEY (`itinerary_id`, `poi_id`),
+  INDEX `fk_itinerary_has_pointOfInterest_pointOfInterest1_idx` (`poi_id` ASC) VISIBLE,
+  INDEX `fk_itinerary_has_pointOfInterest_itinerary1_idx` (`itinerary_id` ASC) VISIBLE,
   CONSTRAINT `fk_itinerary_has_pointOfInterest_itinerary1`
     FOREIGN KEY (`itinerary_id`)
     REFERENCES `travel-itinerary`.`itinerary` (`itinerary_id`)

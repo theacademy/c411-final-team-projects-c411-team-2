@@ -17,7 +17,7 @@ import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
 import com.amadeus.referenceData.Locations;
 import com.amadeus.resources.Location;
-import org.buildATrip.repository.LocationCodeRepository;
+import org.buildATrip.dao.LocationCodeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +25,10 @@ import org.springframework.stereotype.Service;
 public class AmadeusServiceImpl implements AmadeusService {
 
     private final Amadeus amadeus;
-    private LocationCodeRepository locationCodeRepository;
+    private LocationCodeRepo locationCodeRepository;
 
     @Autowired
-    public AmadeusServiceImpl(Amadeus amadeus, LocationCodeRepository locationCodeRepository) {
+    public AmadeusServiceImpl(Amadeus amadeus, LocationCodeRepo locationCodeRepository) {
         this.amadeus = amadeus;
         this.locationCodeRepository=locationCodeRepository;
     }

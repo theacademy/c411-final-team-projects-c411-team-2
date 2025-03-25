@@ -1,10 +1,10 @@
-package org.buildATrip.repository;
+package org.buildATrip.dao;
 
 import org.buildATrip.entity.LocationCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LocationCodeRepository extends JpaRepository<LocationCode, String> {
+public interface LocationCodeRepo extends JpaRepository<LocationCode, String> {
 
 }

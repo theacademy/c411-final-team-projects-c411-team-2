@@ -1,10 +1,9 @@
 package org.buildATrip.service;
 
-import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.TestApplicationConfiguration;
 import org.buildATrip.entity.Flight;
 import org.buildATrip.entity.LocationCode;
-import org.buildATrip.repository.LocationCodeRepository;
+import org.buildATrip.dao.LocationCodeRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,7 @@ class AmadeusServiceImplTest {
     AmadeusService amadeusService;
 
     @Autowired
-    LocationCodeRepository locationCodeRepository;
+    LocationCodeRepo locationCodeRepository;
 
     @BeforeEach
     void setUp() {

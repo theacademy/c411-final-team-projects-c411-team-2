@@ -2,6 +2,9 @@ package org.buildATrip.service;
 
 import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.TestApplicationConfiguration;
+import org.buildATrip.entity.Flight;
+import org.buildATrip.entity.LocationCode;
+import org.buildATrip.repository.LocationCodeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,20 +24,38 @@ class AmadeusServiceImplTest {
     @Autowired
     AmadeusService amadeusService;
 
+    @Autowired
+    LocationCodeRepository locationCodeRepository;
+
     @BeforeEach
     void setUp() {
     }
 
+    @Test
+    void getLocation(){
+       try {
+           LocationCode actual = amadeusService.getAirportLocations("LHR");
+           assertEquals("London".toUpperCase(), actual.getCityName());
 
+           assertNotNull(locationCodeRepository.findById("LHR"));
+
+       }catch (Exception e){
+           fail("Should not have thrown exception");
+       }
+
+    }
     @Test
     void getFlights() {
         try {
-            amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
+
+            List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
+            assertNotNull(flights);
 
         }catch (Exception e){
             fail("Should not have thrown an exception");
         }
     }
+    //should we do a test for a LocationCodeNotFound?
     @Test
     void getFlightsByDestination() {
     }

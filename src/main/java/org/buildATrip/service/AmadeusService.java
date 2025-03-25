@@ -1,17 +1,20 @@
 package org.buildATrip.service;
 
 import com.amadeus.exceptions.ResponseException;
+import com.amadeus.resources.Location;
 import org.buildATrip.entity.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface AmadeusService {
 
+    LocationCode getAirportLocations(String keyword) throws ResponseException;
 
-    Flight[] getFlights(String originaLocationCode, String destinationLocationCode, LocalDate departureDate, LocalDate returnDate, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
+    List<List<Flight>> getFlights(String originaLocationCode, String destinationLocationCode, LocalDate departureDate, LocalDate returnDate, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search/api-reference
 
-    Flight[] getFlightsByDestination(String originLocationCode, String destinationLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
+    List<List<Flight>> getFlightsByDestination(String originLocationCode, String destinationLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/flights/api-doc/flight-inspiration-search/api-reference
 
     Hotel[] getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType);

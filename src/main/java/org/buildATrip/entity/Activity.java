@@ -1,5 +1,6 @@
 package org.buildATrip.entity;
 
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;

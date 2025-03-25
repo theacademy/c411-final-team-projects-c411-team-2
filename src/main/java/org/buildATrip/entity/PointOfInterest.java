@@ -64,4 +64,5 @@ public class PointOfInterest {
     public void setActivityType(ActivityType activityType) {
         this.activityType = activityType;
     }
+
 }

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,6 +35,12 @@ public class HotelController {
     public ResponseEntity<Hotel> getHotelById(@PathVariable("id") String id) {
         Hotel hotel = hotelService.getHotelById(id);
         return (hotel == null) ? new ResponseEntity<Hotel>(hotel, HttpStatus.NOT_FOUND) : new ResponseEntity<Hotel>(hotel, HttpStatus.OK);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Void> createNewHotel(@RequestBody Hotel hotel) {
+        hotelService.createHotel(hotel);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

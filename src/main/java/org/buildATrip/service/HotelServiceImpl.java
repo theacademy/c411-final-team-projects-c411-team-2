@@ -31,6 +31,11 @@ public class HotelServiceImpl implements HotelService {
         return hotelRepo.findById(id).orElse(null);
     }
 
+    @Override
+    public void createHotel(Hotel hotel) {
+        hotelRepo.save(hotel);
+    }
+
 
     @Override
     public void deleteHotel(String id) {

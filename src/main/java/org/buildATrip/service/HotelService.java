@@ -13,6 +13,8 @@ public interface HotelService {
 
     Hotel getHotelById(String id);
 
+    void createHotel(Hotel hotel);
+
     void deleteHotel(String id);
 
 }

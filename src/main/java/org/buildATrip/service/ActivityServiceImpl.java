@@ -16,9 +16,11 @@ public class ActivityServiceImpl implements ActivityService{
     @Autowired
     private AmadeusService amadeusService;
 
+
     @Override
     public List<Activity> searchActivities(String city, LocalDate startDate, LocalDate endDate) {
 
+        //Activity[] getActivitiesByCoordinates(float latitude, float longitude)
         return List.of();
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface HotelService {
 
-    List<Hotel> searchHotel(String cityOriginCode, int numberAdults, LocalDate checkIn, LocalDate checkOut, String hotelBudget, BoardType boardType);
+    List<Hotel> searchHotel(String cityOriginCode, Integer numberAdults, LocalDate checkIn, LocalDate checkOut, String hotelBudget, BoardType boardType);
 
     Hotel getHotelById(String id);
 

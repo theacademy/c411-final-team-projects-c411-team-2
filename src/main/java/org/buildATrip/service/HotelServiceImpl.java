@@ -22,7 +22,10 @@ public class HotelServiceImpl implements HotelService {
 
 
     @Override
-    public List<Hotel> searchHotel(String cityOriginCode, int numberAdults, LocalDate checkIn, LocalDate checkOut, String hotelBudget, BoardType boardType) {
+    public List<Hotel> searchHotel(String cityOriginCode, Integer numberAdults, LocalDate checkIn, LocalDate checkOut, String hotelBudget, BoardType boardType) {
+        if(numberAdults == null) {
+            numberAdults = 1;
+        }
         return new ArrayList<>(List.of(amadeusService.getHotelsByCity(cityOriginCode, numberAdults, checkIn, checkOut, hotelBudget, boardType)));
     }
 

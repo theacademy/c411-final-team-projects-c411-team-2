@@ -22,10 +22,10 @@ public class HotelController {
     @GetMapping("/{destination}/{hotelBudget}")
     public ResponseEntity<List<Hotel>> searchHotel(@PathVariable("destination") String destinationCode,
                                                    @PathVariable("hotelBudget") String hotelBudget,
-                                                   int numberAdults,
-                                                   LocalDate checkIn,
-                                                   LocalDate checkOut,
-                                                   BoardType boardType) {
+                                                   @RequestParam(required = false) Integer numberAdults,
+                                                   @RequestParam(required = false) LocalDate checkIn,
+                                                   @RequestParam(required = false) LocalDate checkOut,
+                                                   @RequestParam(required = false) BoardType boardType) {
 
         List<Hotel> hotelsOffer = hotelService.searchHotel(destinationCode, numberAdults, checkIn, checkOut, hotelBudget, boardType);
         return ResponseEntity.status(HttpStatus.OK).body(hotelsOffer);

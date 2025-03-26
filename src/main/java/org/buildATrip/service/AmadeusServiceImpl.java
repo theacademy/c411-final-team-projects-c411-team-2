@@ -90,7 +90,7 @@ public class AmadeusServiceImpl implements AmadeusService {
 
 
     @Override
-    public List<List<Flight>> getFlightsByDestination(String originLocationCode, String destinationLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
+    public List<List<Flight>> getFlightsByDestination(String originLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
         FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(
                 Params.with("origin", originLocationCode)
                         .and("departureDate", departureDate)
@@ -102,12 +102,12 @@ public class AmadeusServiceImpl implements AmadeusService {
 
         );
 
-        List<List<Flight>> flightOffersBasedOnDestionation = new ArrayList();
+        List<List<Flight>> flightOffersBasedOnDestination = new ArrayList();
         for (FlightDestination flightDestination : flightDestinations){
             List<List<Flight>> flightOffers= getFlights(originLocationCode, flightDestination.getDestination(), departureDate, departureDate.plusDays(duration), numberAdults, maxPrice, isNonStop);
-            flightOffersBasedOnDestionation.add(flightOffers.get(0));
+            flightOffersBasedOnDestination.add(flightOffers.get(0));
         }
-        return flightOffersBasedOnDestionation;
+        return flightOffersBasedOnDestination;
     }
 
     @Override

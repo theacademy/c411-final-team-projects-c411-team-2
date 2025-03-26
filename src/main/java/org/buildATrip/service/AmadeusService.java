@@ -14,7 +14,7 @@ public interface AmadeusService {
     List<List<Flight>> getFlights(String originaLocationCode, String destinationLocationCode, LocalDate departureDate, LocalDate returnDate, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search/api-reference
 
-    List<List<Flight>> getFlightsByDestination(String originLocationCode, String destinationLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
+    List<List<Flight>> getFlightsByDestination(String originLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/flights/api-doc/flight-inspiration-search/api-reference
 
     Hotel[] getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType);

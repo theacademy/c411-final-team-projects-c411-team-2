@@ -75,17 +75,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`boardType`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`boardType` (
-  `id` INT NOT NULL,
-  `name` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `travel-itinerary`.`hotel`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel` (
@@ -98,14 +87,7 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel` (
   `board_type` VARCHAR(15) NOT NULL,
   `latitude` DECIMAL(9,6) NOT NULL,
   `longitude` DECIMAL(9,6) NOT NULL,
-  `boardType_id` INT NOT NULL,
-  PRIMARY KEY (`hotel_id`),
-  INDEX `fk_hotel_boardType1_idx` (`boardType_id` ASC) VISIBLE,
-  CONSTRAINT `fk_hotel_boardType1`
-    FOREIGN KEY (`boardType_id`)
-    REFERENCES `travel-itinerary`.`boardType` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`hotel_id`))
 ENGINE = InnoDB;
 
 
@@ -113,7 +95,7 @@ ENGINE = InnoDB;
 -- Table `travel-itinerary`.`activity`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary`.`activity` (
-  `activity_id` INT NOT NULL,
+  `activity_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `rating` DECIMAL(3,2) NOT NULL,
   `price` DECIMAL(6,2) NOT NULL,
@@ -125,46 +107,15 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`activityTypes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`activityTypes` (
-  `activity_type_id` INT NOT NULL,
-  `name` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`activity_type_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `travel-itinerary`.`pointOfInterest`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary`.`pointOfInterest` (
-  `poi_id` INT NOT NULL,
+  `poi_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `latitude` DECIMAL(9,6) NOT NULL,
   `longitude` DECIMAL(9,6) NOT NULL,
+  `category` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`poi_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `travel-itinerary`.`pointOfInterest_activityTypes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`pointOfInterest_activityTypes` (
-  `activity_type_id` INT NOT NULL,
-  `poi_id` INT NOT NULL,
-  PRIMARY KEY (`activity_type_id`, `poi_id`),
-  INDEX `fk_activityTypes_has_pointOfInterest_pointOfInterest1_idx` (`poi_id` ASC) VISIBLE,
-  INDEX `fk_activityTypes_has_pointOfInterest_activityTypes1_idx` (`activity_type_id` ASC) VISIBLE,
-  CONSTRAINT `fk_activityTypes_has_pointOfInterest_activityTypes1`
-    FOREIGN KEY (`activity_type_id`)
-    REFERENCES `travel-itinerary`.`activityTypes` (`activity_type_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_activityTypes_has_pointOfInterest_pointOfInterest1`
-    FOREIGN KEY (`poi_id`)
-    REFERENCES `travel-itinerary`.`pointOfInterest` (`poi_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -172,7 +123,7 @@ ENGINE = InnoDB;
 -- Table `travel-itinerary`.`itinerary`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary` (
-  `itinerary_id` INT NOT NULL,
+  `itinerary_id` INT NOT NULL AUTO_INCREMENT,
   `num_adults` SMALLINT NOT NULL,
   `price_range_flight` DECIMAL(7,2) NULL,
   `price_range_hotel` DECIMAL(7,2) NULL,

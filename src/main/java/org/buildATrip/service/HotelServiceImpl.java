@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,14 @@ import java.util.List;
 @Component
 public class HotelServiceImpl implements HotelService {
 
-    @Autowired
-    HotelRepo hotelRepo;
+    private HotelRepo hotelRepo;
+    private AmadeusService amadeusService;
 
     @Autowired
-    AmadeusService amadeusService;
-
+    public HotelServiceImpl(AmadeusService amadeusService, HotelRepo hotelRepo) {
+        this.amadeusService = amadeusService;
+        this.hotelRepo = hotelRepo;
+    }
 
     @Override
     public List<Hotel> searchHotel(String cityOriginCode, Integer numberAdults, LocalDate checkIn, LocalDate checkOut, String hotelBudget, BoardType boardType) {

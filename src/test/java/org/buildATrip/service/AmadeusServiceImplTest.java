@@ -49,19 +49,21 @@ class AmadeusServiceImplTest {
 
             List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
             assertNotNull(flights);
+            assertEquals(3,flights.size());
 
         }catch (Exception e){
-            fail("Should not have thrown an exception");
+            fail("Should not have thrown an exception", e);
         }
     }
-    //should we do a test for a LocationCodeNotFound?
+
     @Test
     void getFlightsByDestination() {
         try{
             List<List<Flight>> flights = amadeusService.getFlightsByDestination("NYC" , LocalDate.parse("2025-04-07"),14, 2, 2000, false);
             assertNotNull(flights);
+            assertEquals(3,flights.size());
         }catch (Exception e){
-            fail("Should not have thrown an exception");
+            fail("Should not have thrown an exception", e);
         }
     }
 

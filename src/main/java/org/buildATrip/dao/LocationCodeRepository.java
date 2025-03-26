@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LocationCodeRepo extends JpaRepository<LocationCode, String> {
+public interface LocationCodeRepository extends JpaRepository<LocationCode, String> {
     // Find a location by city name
     LocationCode findByCityNameIgnoreCase(String cityName);
 }

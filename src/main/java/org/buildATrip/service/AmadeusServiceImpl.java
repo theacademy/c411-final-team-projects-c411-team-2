@@ -17,7 +17,7 @@ import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
 import com.amadeus.referenceData.Locations;
 import com.amadeus.resources.Location;
-import org.buildATrip.dao.LocationCodeRepo;
+import org.buildATrip.dao.LocationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +25,10 @@ import org.springframework.stereotype.Service;
 public class AmadeusServiceImpl implements AmadeusService {
 
     private final Amadeus amadeus;
-    private LocationCodeRepo locationCodeRepository;
+    private LocationCodeRepository locationCodeRepository;
 
     @Autowired
-    public AmadeusServiceImpl(Amadeus amadeus, LocationCodeRepo locationCodeRepository) {
+    public AmadeusServiceImpl(Amadeus amadeus, LocationCodeRepository locationCodeRepository) {
         this.amadeus = amadeus;
         this.locationCodeRepository=locationCodeRepository;
     }
@@ -51,7 +51,7 @@ public class AmadeusServiceImpl implements AmadeusService {
                 Params.with("originLocationCode", originaLocationCode)
                         .and("destinationLocationCode", destinationLocationCode)
                         .and("departureDate", departureDate)
-                       // .and("returnDate", returnDate)
+                        // .and("returnDate", returnDate)
                         .and("adults", numberAdults)
                         .and("children", 0)
                         .and("infants", 0)
@@ -90,7 +90,7 @@ public class AmadeusServiceImpl implements AmadeusService {
 
 
     @Override
-    public List<List<Flight>> getFlightsByDestination(String originLocationCode, String destinationLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
+    public List<List<Flight>> getFlightsByDestination(String originLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
         FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(
                 Params.with("origin", originLocationCode)
                         .and("departureDate", departureDate)
@@ -102,12 +102,12 @@ public class AmadeusServiceImpl implements AmadeusService {
 
         );
 
-        List<List<Flight>> flightOffersBasedOnDestionation = new ArrayList();
+        List<List<Flight>> flightOffersBasedOnDestination = new ArrayList();
         for (FlightDestination flightDestination : flightDestinations){
             List<List<Flight>> flightOffers= getFlights(originLocationCode, flightDestination.getDestination(), departureDate, departureDate.plusDays(duration), numberAdults, maxPrice, isNonStop);
-            flightOffersBasedOnDestionation.add(flightOffers.get(0));
+            flightOffersBasedOnDestination.add(flightOffers.get(0));
         }
-        return flightOffersBasedOnDestionation;
+        return flightOffersBasedOnDestination;
     }
 
     @Override

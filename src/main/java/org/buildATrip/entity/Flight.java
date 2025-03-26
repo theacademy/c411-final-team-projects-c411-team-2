@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "flight")
@@ -39,6 +40,9 @@ public class Flight {
     @ManyToOne
     @JoinColumn(name = "dest_code", nullable = false)
     private LocationCode destinationCode;
+
+    @ManyToMany(mappedBy = "flightsList")
+    private List<Itinerary> itineraryList;
 
     // Default constructor
     public Flight() {

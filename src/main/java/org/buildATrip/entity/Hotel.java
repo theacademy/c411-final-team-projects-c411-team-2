@@ -4,6 +4,7 @@ package org.buildATrip.entity;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -38,6 +39,10 @@ public class Hotel {
     @Column(name = "board_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
+
+    @ManyToMany(mappedBy = "hotelsList")
+    private List<Itinerary> itineraryList;
+
 
 
     public String getHotel_id() {

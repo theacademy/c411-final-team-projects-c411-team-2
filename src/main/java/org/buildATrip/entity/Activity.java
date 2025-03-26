@@ -3,6 +3,7 @@ package org.buildATrip.entity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,6 +32,9 @@ public class Activity {
 
     @Column(name = "longitude", nullable = false)
     private BigDecimal longitude;
+
+    @ManyToMany(mappedBy = "activitiesList")
+    private List<Itinerary> itineraryList;
 
     public Activity() {
     }

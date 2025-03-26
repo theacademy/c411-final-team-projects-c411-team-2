@@ -4,11 +4,12 @@ import org.buildATrip.dao.HotelRepo;
 import org.buildATrip.entity.Hotel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Component
+@Service
 public class HotelServiceImpl implements HotelService {
 
     @Autowired

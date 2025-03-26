@@ -1,7 +1,12 @@
 package org.buildATrip.service;
 
+import com.amadeus.Response;
 import com.amadeus.resources.FlightDestination;
 import com.amadeus.resources.FlightOfferSearch;
+import com.amadeus.resources.HotelOffer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.buildATrip.entity.*;
 
 import java.math.BigDecimal;
@@ -10,7 +15,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.amadeus.Amadeus;
 import com.amadeus.Params;
@@ -104,20 +111,77 @@ public class AmadeusServiceImpl implements AmadeusService {
 
         List<List<Flight>> flightOffersBasedOnDestination = new ArrayList();
         for (int i=0; i<3; i++){
-            List<List<Flight>> flightOffers= getFlights(originLocationCode, flightDestinations[i].getDestination(), departureDate, departureDate.plusDays(duration), numberAdults, maxPrice, isNonStop);
+            List<List<Flight>> flightOffers= getFlights(originLocationCode,
+                    flightDestinations[i].getDestination(),
+                    departureDate,
+                    departureDate.plusDays(duration),
+                    numberAdults, maxPrice, isNonStop);
             flightOffersBasedOnDestination.add(flightOffers.get(0));
+            bypassRateLimit();
+
         }
         return flightOffersBasedOnDestination;
     }
 
-    @Override
-    public Hotel[] getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType) {
-        return new Hotel[0];
+    private void bypassRateLimit() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Activity[] getActivitiesByCoordinates(float latitude, float longitude) {
-        return new Activity[0];
+    public List<Hotel> getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType) throws ResponseException {
+
+        Response response = amadeus.get("/v1/reference-data/locations/hotels/by-city",
+                Params.with("cityCode", cityCode));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<String> hotelIds = new ArrayList<>();
+
+        try {
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            for (int i=0; i<5; i++) {
+                hotelIds.add(rootNode.get("data").get(i).get("hotelId").asText());
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        HotelOffer[] offers = amadeus.shopping.hotelOffers.get(
+                Params.with("hotelIds", hotelIds)
+                        .and("adult", numberAdults)
+                        .and("checkInDate", checkinDate)
+                        .and("checkOutDate", checkoutDate)
+                        .and("countryOfResidence", "CAN")
+                        .and("roomQuantity", 1)
+                        .and("price", priceRange)  //200-300 string!
+                        //.and("currency", "CAD")
+                        .and("boardType", boardType)
+
+        );
+
+        List<Hotel> hotels = new ArrayList<>();
+
+        for (int i=0; i<5; i++){
+            if (offers[i].isAvailable()){
+                Arrays.stream(offers[i].getOffers()).findFirst();
+
+
+            }
+
+        }
+        return hotels;
+    }
+
+    @Override
+    public List<Activity> getActivitiesByCoordinates(float latitude, float longitude) {
+        List<Activity> activities = new ArrayList<>();
+//        com.amadeus.resources.Activity[] activities = amadeus.shopping.activities.get(
+//                Params.with()
+//        );
+        return activities;
     }
 
     @Override

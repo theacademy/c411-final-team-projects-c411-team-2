@@ -1,7 +1,9 @@
 package org.buildATrip.service;
 
 import org.buildATrip.TestApplicationConfiguration;
+import org.buildATrip.entity.BoardType;
 import org.buildATrip.entity.Flight;
+import org.buildATrip.entity.Hotel;
 import org.buildATrip.entity.LocationCode;
 import org.buildATrip.dao.LocationCodeRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +71,12 @@ class AmadeusServiceImplTest {
 
     @Test
     void getHotelsByCity() {
+        try{
+            List<Hotel> hotels = amadeusService.getHotelsByCity("PAR", 1, LocalDate.parse("2025-04-15"), LocalDate.parse("2025-04-18"), "3000", BoardType.ROOM_ONLY);
+            assertNotNull(hotels);
+        }catch (Exception e){
+            fail("Should not have thrown an exception", e);
+        }
     }
 
     @Test

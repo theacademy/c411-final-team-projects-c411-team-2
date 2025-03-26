@@ -1,10 +1,12 @@
 package org.buildATrip.service;
 
 import org.buildATrip.entity.PointOfInterest;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class PointOfInterestServiceImpl implements PointOfInterestService{
     @Override
     public List<PointOfInterest> searchPointsOfInterest(String city, LocalDate startDate, LocalDate endDate) {

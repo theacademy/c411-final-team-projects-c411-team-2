@@ -71,13 +71,13 @@ public class AmadeusServiceImplStub implements AmadeusService{
     }
 
     @Override
-    public Hotel[] getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType) {
-        return new Hotel[0];
+    public List<Hotel> getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType) {
+        return null;
     }
 
     @Override
-    public Activity[] getActivitiesByCoordinates(float latitude, float longitude) {
-        return new Activity[0];
+    public List<Activity> getActivitiesByCoordinates(float latitude, float longitude) {
+        return null;
     }
 
     @Override

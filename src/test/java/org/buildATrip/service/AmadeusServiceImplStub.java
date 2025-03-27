@@ -80,8 +80,5 @@ public class AmadeusServiceImplStub implements AmadeusService{
         return null;
     }
 
-    @Override
-    public PointOfInterest[] getPointsOfInterestByCoordinates(float latitude, float longitude, ActivityType[] activityTypes) {
-        return new PointOfInterest[0];
-    }
+
 }

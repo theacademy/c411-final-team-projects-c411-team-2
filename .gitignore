@@ -37,10 +37,10 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### Application properties
-./src/main/resources/application.properties
-./src/test/resources/application.properties
-
 
 ### env variables ###
 .env
+
+### Application properties
+./src/main/resources/application.properties
+./src/test/resources/application.properties

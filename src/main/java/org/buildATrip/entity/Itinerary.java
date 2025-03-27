@@ -103,7 +103,19 @@ public class Itinerary {
         return endDate;
     }
 
-/*    public User getUser() {
+    public List<Hotel> getHotelsList() {
+        return hotelsList;
+    }
+
+    public List<Activity> getActivitiesList() {
+        return activitiesList;
+    }
+
+    public List<Flight> getFlightsList() {
+        return flightsList;
+    }
+
+    /*    public User getUser() {
         return user;
     }*/
 
@@ -143,7 +155,19 @@ public class Itinerary {
         this.endDate = endDate;
     }
 
-/*    public void setUser(User user) {
+    public void setHotelsList(List<Hotel> hotelsList) {
+        this.hotelsList = hotelsList;
+    }
+
+    public void setActivitiesList(List<Activity> activitiesList) {
+        this.activitiesList = activitiesList;
+    }
+
+    public void setFlightsList(List<Flight> flightsList) {
+        this.flightsList = flightsList;
+    }
+
+    /*    public void setUser(User user) {
         this.user = user;
     }
 

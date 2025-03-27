@@ -81,6 +81,10 @@ public class Hotel {
         return boardType;
     }
 
+    public List<Itinerary> getItineraryList() {
+        return itineraryList;
+    }
+
     public void setHotel_id(String hotel_id) {
         this.hotel_id = hotel_id;
     }
@@ -115,6 +119,10 @@ public class Hotel {
 
     public void setBoardType(BoardType boardType) {
         this.boardType = boardType;
+    }
+
+    public void setItineraryList(List<Itinerary> itineraryList) {
+        this.itineraryList = itineraryList;
     }
 
     @Override

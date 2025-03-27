@@ -10,13 +10,13 @@ public interface ItineraryService {
 
     Itinerary createItinerary(Itinerary itinerary);
 
-    Itinerary updateItinerary(int id, Itinerary itinerary);
+    Itinerary updateItinerary(Itinerary itinerary);
 
     void deleteItinerary(int id);
 
     Itinerary addFlightToItinerary(int itineraryId, int flightId);
 
-    Itinerary addHotelToItinerary(int itineraryId, int hotelId);
+    Itinerary addHotelToItinerary(int itineraryId, String hotelId);
 
     Itinerary addActivityToItinerary(int itineraryId, int activityId);
 

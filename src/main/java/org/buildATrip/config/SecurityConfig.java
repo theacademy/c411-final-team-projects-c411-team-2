@@ -20,6 +20,7 @@ public class SecurityConfig {
                 .antMatchers("/user/*").permitAll()
                 .antMatchers("/activity/*").permitAll()
                 .antMatchers("/hotel/*").permitAll()
+                .antMatchers("/flight/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

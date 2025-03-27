@@ -224,6 +224,7 @@ public class AmadeusServiceImpl implements AmadeusService {
             }
             activity.setLatitude(new BigDecimal(String.valueOf(activitiesOffer[i].getGeoCode().getLatitude())));
             activity.setLongitude(new BigDecimal(String.valueOf(activitiesOffer[i].getGeoCode().getLongitude())));
+            activities.add(activity);
         }
         return activities;
     }

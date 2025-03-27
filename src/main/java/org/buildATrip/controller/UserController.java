@@ -54,4 +54,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+//    @GetMapping("/{userId}/itineraries")
+//    public List<Itinerary> getItinerariesForUser(@PathVariable int userId) {
+//        return userService.getItinerariesForUser(userId);
+//    }
+
 }

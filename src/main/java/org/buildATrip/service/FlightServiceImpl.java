@@ -88,9 +88,49 @@ public class FlightServiceImpl implements FlightService {
     public List<List<Flight>> searchOutboundFlights(String originLocationCode, String destinationLocationCode,
                                                     LocalDate departureDate, int numberAdults,
                                                     int maxPrice, boolean isNonStop) throws ResponseException {
-        // Call Amadeus to get one-way flights for the outbound journey
-        return amadeusService.getFlights(originLocationCode, destinationLocationCode,
-                departureDate, null, numberAdults, maxPrice, isNonStop);
+        try {
+            // First ensure we have the location codes in our database
+            ensureLocationCode(originLocationCode);
+            ensureLocationCode(destinationLocationCode);
+
+            // Then call Amadeus to get one-way flights for the outbound journey
+            return amadeusService.getFlights(originLocationCode, destinationLocationCode,
+                    departureDate, null, numberAdults, maxPrice, isNonStop);
+        } catch (ResponseException e) {
+            // Log the error for debugging
+            System.err.println("Error searching flights: " + e.getMessage());
+
+            // Check if it's a rate limit error
+            if (e.getResponse() != null && e.getResponse().getStatusCode() == 429) {
+                // You could implement a retry with backoff strategy here
+                throw new RuntimeException("API rate limit exceeded. Please try again later.");
+            }
+
+            throw e;
+        }
+    }
+
+    /**
+     * Helper method to ensure a location code exists in the database
+     * before using it in flight searches
+     */
+    private void ensureLocationCode(String code) throws ResponseException {
+        // Check if the code already exists in our database
+        if (!locationCodeRepository.existsById(code)) {
+            // If not, try to fetch it from Amadeus
+            try {
+                amadeusService.getAirportLocations(code);
+            } catch (Exception e) {
+                // If there's an error but it looks like a valid airport code,
+                // create a placeholder entry
+                if (code.length() == 3 && code.matches("[A-Z]{3}")) {
+                    LocationCode placeholder = new LocationCode(code, code + " Airport");
+                    locationCodeRepository.save(placeholder);
+                } else {
+                    throw e;
+                }
+            }
+        }
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +29,12 @@ class AmadeusServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        //Bypass rate limit
+        try {
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

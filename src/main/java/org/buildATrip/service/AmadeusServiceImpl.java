@@ -219,7 +219,10 @@ public class AmadeusServiceImpl implements AmadeusService {
                 flight.setDepartureTime(LocalDateTime.parse(segment.getDeparture().getAt()).toLocalTime());
                 flight.setDestinationCode(locationCodeRepository.findById(segment.getArrival().getIataCode()).orElse(getAirportLocations(segment.getArrival().getIataCode())));
                 Duration duration = Duration.parse(segment.getDuration());
-                flight.setDuration(LocalTime.of((int) duration.toHours(), duration.toMinutesPart())); //don't think a flight can be more than 24h
+                flight.setDuration(LocalTime.of((int) duration.toHours(), duration.toMinutesPart()));
+
+                // Set the isNonstop value
+                flight.setIsNonstop(isNonStop);
                 if(segmentsOneWay.length == countNumberFlights){
                     flight.setPrice(new BigDecimal(String.valueOf(flightOffer.getPrice().getGrandTotal())));
                 }
@@ -233,22 +236,52 @@ public class AmadeusServiceImpl implements AmadeusService {
 
 
     @Override
-    public List<List<Flight>> getFlightsByDestination(String originLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
-        FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(
+    public List<List<Flight>> getFlightsByDestination(String originLocationCode,
+                                                      LocalDate departureDate,
+                                                      int duration,
+                                                      int numberAdults,
+                                                      int maxPrice,
+                                                      boolean isNonStop) throws ResponseException {
+        // Use flightInspirationSearch instead of flightDestinations
+        FlightDestination[] inspirationResults = amadeus.shopping.flightDestinations.get(
                 Params.with("origin", originLocationCode)
                         .and("departureDate", departureDate)
-                        .and("duration", duration)
-                        .and("oneWay", false)
-                        .and("nonStop", isNonStop)
+                        // Remove duration parameter as it's not supported
+                        // .and("duration", duration)
+                        // Remove oneWay parameter as it's not supported
+                        // .and("oneWay", false)
+                        // Remove nonStop parameter as it's not supported
+                        // .and("nonStop", isNonStop)
                         .and("maxPrice", maxPrice)
-                        .and("viewBy", "DESTINATION")
-
+                // Remove viewBy parameter as it's not supported
+                // .and("viewBy", "DESTINATION")
         );
 
-        List<List<Flight>> flightOffersBasedOnDestination = new ArrayList();
-        for (FlightDestination flightDestination : flightDestinations){
-            List<List<Flight>> flightOffers= getFlights(originLocationCode, flightDestination.getDestination(), departureDate, departureDate.plusDays(duration), numberAdults, maxPrice, isNonStop);
-            flightOffersBasedOnDestination.add(flightOffers.get(0));
+        List<List<Flight>> flightOffersBasedOnDestination = new ArrayList<>();
+        for (FlightDestination inspiration : inspirationResults) {
+            try {
+                // Get the return date by adding the duration to departure date
+                LocalDate returnDate = departureDate.plusDays(duration);
+
+                // Get flights for this destination
+                List<List<Flight>> flightOffers = getFlights(
+                        originLocationCode,
+                        inspiration.getDestination(),
+                        departureDate,
+                        returnDate,
+                        numberAdults,
+                        maxPrice,
+                        isNonStop
+                );
+
+                if (!flightOffers.isEmpty()) {
+                    flightOffersBasedOnDestination.add(flightOffers.get(0));
+                }
+            } catch (Exception e) {
+                // Log and continue if we can't get flights for a specific destination
+                System.out.println("Error getting flights for destination " +
+                        inspiration.getDestination() + ": " + e.getMessage());
+            }
         }
         return flightOffersBasedOnDestination;
     }

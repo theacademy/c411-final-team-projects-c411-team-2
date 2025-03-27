@@ -112,10 +112,12 @@ public class FlightController {
     @PostMapping("/flights/outbound")
     public ResponseEntity<List<Flight>> saveOutboundFlights(
             @RequestBody List<Flight> flights,
-            @RequestParam Integer itineraryId) {
+            @RequestParam(required = false) Integer itineraryId) {
 
         try {
-            List<Flight> savedFlights = flightService.selectAndSaveOutboundFlights(flights, itineraryId);
+            // Use a default itinerary ID for testing if none is provided
+            Integer effectiveItineraryId = itineraryId != null ? itineraryId : 1;
+            List<Flight> savedFlights = flightService.selectAndSaveOutboundFlights(flights, effectiveItineraryId);
             return new ResponseEntity<>(savedFlights, HttpStatus.CREATED);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

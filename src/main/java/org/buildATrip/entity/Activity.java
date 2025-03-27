@@ -33,7 +33,7 @@ public class Activity {
     @Column(name = "longitude", nullable = false)
     private BigDecimal longitude;
 
-    @ManyToMany(mappedBy = "activitiesList")
+    @ManyToMany(mappedBy = "activitiesList", cascade = CascadeType.ALL)
     private List<Itinerary> itineraryList;
 
     public Activity() {

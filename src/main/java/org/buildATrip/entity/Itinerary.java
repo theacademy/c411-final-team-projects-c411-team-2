@@ -63,9 +63,9 @@ public class Itinerary {
     )
     private List<Flight> flightsList;
 
-/*    @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;*/
+    private User user;
 
     public Integer getId() {
         return id;
@@ -115,9 +115,9 @@ public class Itinerary {
         return flightsList;
     }
 
-    /*    public User getUser() {
+    public User getUser() {
         return user;
-    }*/
+    }
 
     public void setId(Integer id) {
         this.id = id;
@@ -167,7 +167,7 @@ public class Itinerary {
         this.flightsList = flightsList;
     }
 
-    /*    public void setUser(User user) {
+        public void setUser(User user) {
         this.user = user;
     }
 
@@ -181,5 +181,5 @@ public class Itinerary {
     @Override
     public int hashCode() {
         return Objects.hash(id, numAdults, priceRangeFlight, priceRangeHotel, priceRangeActivity, isConfirmed, totalPrice, startDate, endDate, user);
-    }*/
+    }
 }

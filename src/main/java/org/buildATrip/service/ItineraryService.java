@@ -26,5 +26,7 @@ public interface ItineraryService {
 
     List<Itinerary> getItinerariesByUser(int userId);
 
+    void deleteAllItinerary();
+
 
 }

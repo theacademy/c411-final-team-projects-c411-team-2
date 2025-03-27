@@ -41,7 +41,7 @@ public class Flight {
     @JoinColumn(name = "dest_code", nullable = false)
     private LocationCode destinationCode;
 
-    @ManyToMany(mappedBy = "flightsList")
+    @ManyToMany(mappedBy = "flightsList", cascade = CascadeType.ALL)
     private List<Itinerary> itineraryList;
 
     // Default constructor

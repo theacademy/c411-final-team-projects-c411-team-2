@@ -40,7 +40,7 @@ public class Hotel {
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
 
-    @ManyToMany(mappedBy = "hotelsList")
+    @ManyToMany(mappedBy = "hotelsList", cascade = CascadeType.ALL)
     private List<Itinerary> itineraryList;
 
 

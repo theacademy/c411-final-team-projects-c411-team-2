@@ -21,9 +21,6 @@ public interface AmadeusService {
     //https://developers.amadeus.com/self-service/category/hotels/api-doc/hotel-list/api-reference
     //https://developers.amadeus.com/self-service/category/hotels/api-doc/hotel-search/api-reference
 
-    List<Activity> getActivitiesByCoordinates(float latitude, float longitude);
+    List<Activity> getActivitiesByCoordinates(float latitude, float longitude) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/destination-experiences/api-doc/tours-and-activities/api-reference
-
-    PointOfInterest[] getPointsOfInterestByCoordinates(float latitude, float longitude, ActivityType[] activityTypes);
-    //https://developers.amadeus.com/self-service/category/destination-experiences/api-doc/points-of-interest/api-reference
 }

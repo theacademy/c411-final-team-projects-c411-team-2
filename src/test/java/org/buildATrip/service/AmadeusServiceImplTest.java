@@ -1,10 +1,7 @@
 package org.buildATrip.service;
 
 import org.buildATrip.TestApplicationConfiguration;
-import org.buildATrip.entity.BoardType;
-import org.buildATrip.entity.Flight;
-import org.buildATrip.entity.Hotel;
-import org.buildATrip.entity.LocationCode;
+import org.buildATrip.entity.*;
 import org.buildATrip.dao.LocationCodeRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,9 +78,12 @@ class AmadeusServiceImplTest {
 
     @Test
     void getActivitiesByCoordinates() {
+        try{
+            List<Activity> activities = amadeusService.getActivitiesByCoordinates(41.397158F, 2.160873F);
+            assertNotNull(activities);
+        }catch (Exception e ){
+            fail("Should not have thrown an exception", e);
+        }
     }
 
-    @Test
-    void getPointsOfInterestByCoordinates() {
-    }
 }

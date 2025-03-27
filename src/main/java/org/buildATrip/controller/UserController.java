@@ -25,20 +25,9 @@ public class UserController {
         }
     }
 
-//    @GetMapping("/{email}")
-//    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-//        User user = userService.getUserByEmail(email);
-//        if (user != null) {
-//            return new ResponseEntity<User>(user, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<User>(user, HttpStatus.NOT_FOUND);
-//        }
-//    }
-
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         User savedUser = userService.registerUser(user);
-        System.out.println("User did not register: "+ savedUser);
         return ResponseEntity.ok(savedUser);
     }
 
@@ -64,9 +53,5 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
 
 }

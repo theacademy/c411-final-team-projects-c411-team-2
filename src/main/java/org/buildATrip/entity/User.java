@@ -21,8 +21,6 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    //prevent password from being exposed in json responses
-//    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "origin_city")

@@ -44,6 +44,18 @@ public class Hotel {
     private List<Itinerary> itineraryList;
 
 
+    public Hotel(){}
+
+    public Hotel(String name, BigDecimal price, LocalDate checkinDate, LocalDate checkoutDate, BigDecimal longitude, BigDecimal latitude, String address, BoardType boardType) {
+        this.name = name;
+        this.price = price;
+        this.checkinDate = checkinDate;
+        this.checkoutDate = checkoutDate;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.address = address;
+        this.boardType = boardType;
+    }
 
     public String getHotel_id() {
         return hotel_id;

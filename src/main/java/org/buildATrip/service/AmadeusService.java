@@ -17,12 +17,11 @@ public interface AmadeusService {
     List<List<Flight>> getFlightsByDestination(String originLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/flights/api-doc/flight-inspiration-search/api-reference
 
-    Hotel[] getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType);
+    List<Hotel> getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/hotels/api-doc/hotel-list/api-reference
     //https://developers.amadeus.com/self-service/category/hotels/api-doc/hotel-search/api-reference
 
-    Activity[] getActivitiesByCoordinates(float latitude, float longitude);
-    //LAURA - YOU HAVE TO FILTER BY PRICE/ CATEGORY
+    List<Activity> getActivitiesByCoordinates(float latitude, float longitude);
     //https://developers.amadeus.com/self-service/category/destination-experiences/api-doc/tours-and-activities/api-reference
 
     PointOfInterest[] getPointsOfInterestByCoordinates(float latitude, float longitude, ActivityType[] activityTypes);

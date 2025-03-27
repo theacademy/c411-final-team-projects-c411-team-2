@@ -6,19 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class ActivityServiceImpl implements ActivityService{
+
+    private final ActivityRepository activityRepository;
+    private final AmadeusService amadeusService;
+
     @Autowired
-    private ActivityRepository activityRepository;
-    @Autowired
-    private AmadeusService amadeusService;
+    public ActivityServiceImpl(ActivityRepository activityRepository, AmadeusService amadeusService) {
+        this.activityRepository = activityRepository;
+        this.amadeusService = amadeusService;
+    }
 
     @Override
-    public List<Activity> searchActivities(String city, LocalDate startDate, LocalDate endDate) {
-
+    public List<Activity> searchActivities(float latitude, float longitude, BigDecimal budgetActivity) {
+//        amadeusService.getActivitiesByCoordinates(latitude, longitude).stream().filter((a) -> new BigDecimal(a.price.toString()).compareTo(budgetActivity) <= 0);
+        //Activity[] getActivitiesByCoordinates(float latitude, float longitude)
         return List.of();
     }
 

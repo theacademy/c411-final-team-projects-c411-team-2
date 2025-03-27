@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/flight")  // Changed from "/api"
 @CrossOrigin(origins = "*")
 public class FlightController {
 
@@ -33,14 +33,14 @@ public class FlightController {
     }
 
     // Get all flights
-    @GetMapping("/flights")
+    @GetMapping("")  // Changed from "/flights"
     public ResponseEntity<List<Flight>> getAllFlights() {
         List<Flight> flights = flightService.getAllFlights();
         return new ResponseEntity<>(flights, HttpStatus.OK);
     }
 
     // Get flight by ID
-    @GetMapping("/flights/{id}")
+    @GetMapping("/{id}")  // Changed from "/flights/{id}"
     public ResponseEntity<Flight> getFlightById(@PathVariable Integer id) {
         Optional<Flight> flight = flightService.getFlightById(id);
         return flight.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
@@ -48,7 +48,7 @@ public class FlightController {
     }
 
     // Search for outbound flights
-    @GetMapping("/flights/search")
+    @GetMapping("/search")  // Changed from "/flights/search"
     public ResponseEntity<List<List<Flight>>> searchFlights(
             @RequestParam String origin,
             @RequestParam String destination,
@@ -68,7 +68,7 @@ public class FlightController {
     }
 
     // Search for return flights
-    @GetMapping("/flights/search/return")
+    @GetMapping("/search/return")  // Changed from "/flights/search/return"
     public ResponseEntity<List<List<Flight>>> searchReturnFlights(
             @RequestParam String origin,
             @RequestParam String destination,
@@ -89,7 +89,7 @@ public class FlightController {
     }
 
     // Search for flight destinations
-    @GetMapping("/flights/destinations")
+    @GetMapping("/destinations")  // Changed from "/flights/destinations"
     public ResponseEntity<List<List<Flight>>> searchFlightDestinations(
             @RequestParam String origin,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
@@ -109,7 +109,7 @@ public class FlightController {
     }
 
     // Save selected outbound flights to an itinerary
-    @PostMapping("/flights/outbound")
+    @PostMapping("/outbound")  // Changed from "/flights/outbound"
     public ResponseEntity<List<Flight>> saveOutboundFlights(
             @RequestBody List<Flight> flights,
             @RequestParam(required = false) Integer itineraryId) {
@@ -126,7 +126,7 @@ public class FlightController {
     }
 
     // Save selected return flights to an itinerary
-    @PostMapping("/flights/return")
+    @PostMapping("/return")  // Changed from "/flights/return"
     public ResponseEntity<List<Flight>> saveReturnFlights(
             @RequestBody List<Flight> flights,
             @RequestParam Integer itineraryId) {
@@ -141,7 +141,7 @@ public class FlightController {
     }
 
     // Save both outbound and return flights to an itinerary
-    @PostMapping("/flights/complete")
+    @PostMapping("/complete")  // Changed from "/flights/complete"
     public ResponseEntity<Map<String, List<Flight>>> saveCompleteFlights(
             @RequestBody Map<String, List<Flight>> flightGroups,
             @RequestParam Integer itineraryId) {
@@ -169,7 +169,7 @@ public class FlightController {
     }
 
     // Delete a flight
-    @DeleteMapping("/flights/{id}")
+    @DeleteMapping("/{id}")  // Changed from "/flights/{id}"
     public ResponseEntity<Void> deleteFlight(@PathVariable Integer id) {
         try {
             flightService.deleteFlight(id);
@@ -181,7 +181,7 @@ public class FlightController {
     }
 
     // Search for location code by keyword
-    @GetMapping("/locations/search")
+    @GetMapping("/location/search")  // Changed from "/locations/search"
     public ResponseEntity<LocationCode> searchLocationCode(@RequestParam String keyword) {
         try {
             LocationCode locationCode = locationCodeService.findOrCreateLocationCode(keyword);

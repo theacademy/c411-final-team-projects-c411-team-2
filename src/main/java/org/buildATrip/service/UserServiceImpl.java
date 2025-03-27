@@ -11,13 +11,17 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
 //    private ItineraryService itineraryService;
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public User getUserById(int id) {
@@ -25,10 +29,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByEmail(String email){
+        return userRepository.findByEmail(email).orElse(null);
+    }
+    @Override
     public User registerUser(User user) {
-        //hash the password before saving it
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        boolean isInvalid = false;
+        if (user.getFirstName().isBlank()){
+            user.setFirstName("Name blank, user NOT added");
+            isInvalid = true;
+        }
+        if (user.getLastName().isBlank()){
+            user.setLastName("Name blank, user NOT added");
+            isInvalid = true;
+        }
+        if (user.getEmail().isBlank()){
+            user.setEmail("Email blank, user NOT added");
+            isInvalid = true;
+        }
+        if (user.getPassword().isBlank()){
+            user.setPassword("Password blank, user NOT added");
+            isInvalid = true;
+        }
+        if (user.getOriginCity().isBlank()){
+            user.setOriginCity("City blank, user NOT added");
+            isInvalid = true;
+        }
+        if (user.getDateOfBirth() == null){
+            user.setLastName("Date blank, user NOT added");
+            isInvalid = true;
+        }
+
+        if (!isInvalid) {
+//            hash the password before saving it
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return userRepository.save(user);
+        } else {
+            return user;
+        }
+
     }
 
     @Override

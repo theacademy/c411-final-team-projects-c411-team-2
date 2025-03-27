@@ -22,7 +22,7 @@ public class User {
     private String email;
 
     //prevent password from being exposed in json responses
-    @JsonIgnore
+//    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "origin_city")

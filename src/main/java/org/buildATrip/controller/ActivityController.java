@@ -1,2 +1,4 @@
-package org.buildATrip.controller;public class ActivityController {
+package org.buildATrip.controller;
+
+public class ActivityController {
 }

@@ -10,5 +10,6 @@ public interface UserService {
     User login(String email, String password);
     User updateUser(int id, User user);
     void deleteUser(int id);
+    void deleteAllUser(); // used to clean up test db
 //    List<Itinerary> getItinerariesForUser(int userId);
 }

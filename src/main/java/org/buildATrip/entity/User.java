@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -27,6 +28,10 @@ public class User {
     private String originCity;
     @Column(name = "dob")
     private LocalDate dateOfBirth;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Itinerary> itineraryList;
 
     public User() {}
 
@@ -85,5 +90,13 @@ public class User {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public List<Itinerary> getItineraryList() {
+        return itineraryList;
+    }
+
+    public void setItineraryList(List<Itinerary> itineraryList) {
+        this.itineraryList = itineraryList;
     }
 }

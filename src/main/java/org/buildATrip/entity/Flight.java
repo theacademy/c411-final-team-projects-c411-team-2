@@ -1,9 +1,12 @@
 package org.buildATrip.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "flight")
@@ -39,6 +42,10 @@ public class Flight {
     @ManyToOne
     @JoinColumn(name = "dest_code", nullable = false)
     private LocationCode destinationCode;
+
+    @ManyToMany(mappedBy = "flightsList", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Itinerary> itineraryList;
 
     // Default constructor
     public Flight() {
@@ -132,6 +139,13 @@ public class Flight {
         this.destinationCode = destinationCode;
     }
 
+    public List<Itinerary> getItineraryList() {
+        return itineraryList;
+    }
+
+    public void setItineraryList(List<Itinerary> itineraryList) {
+        this.itineraryList = itineraryList;
+    }
 
     // Helper method to calculate arrival time
     public LocalTime getArrivalTime() {

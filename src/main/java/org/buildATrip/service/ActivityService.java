@@ -17,4 +17,6 @@ public interface ActivityService {
     public Activity updateActivity(int id, Activity activity);
 
     public void deleteActivity(int id);
+
+    public void deleteAllActivity();
 }

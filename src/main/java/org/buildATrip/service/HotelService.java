@@ -17,4 +17,8 @@ public interface HotelService {
 
     void deleteHotel(String id);
 
+    void deleteAllHotel();
+
+    Hotel findHotelWithItineraryList(String id);
+
 }

@@ -94,6 +94,11 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteAllUser() {
+        userRepository.deleteAll();
+    }
+
 //    @Override
 //    public List<Itinerary> getItinerariesForUser(int userId) {
 //        return itineraryService.getItinerariesByUserId(userId);

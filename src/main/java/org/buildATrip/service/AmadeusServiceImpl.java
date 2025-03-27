@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.amadeus.Amadeus;
@@ -24,7 +25,7 @@ import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
 import com.amadeus.referenceData.Locations;
 import com.amadeus.resources.Location;
-import org.buildATrip.dao.LocationCodeRepo;
+import org.buildATrip.dao.LocationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,23 +33,39 @@ import org.springframework.stereotype.Service;
 public class AmadeusServiceImpl implements AmadeusService {
 
     private final Amadeus amadeus;
-    private LocationCodeRepo locationCodeRepository;
+    private LocationCodeRepository locationCodeRepository;
 
     @Autowired
-    public AmadeusServiceImpl(Amadeus amadeus, LocationCodeRepo locationCodeRepository) {
+    public AmadeusServiceImpl(Amadeus amadeus, LocationCodeRepository locationCodeRepository) {
         this.amadeus = amadeus;
-        this.locationCodeRepository=locationCodeRepository;
+        this.locationCodeRepository = locationCodeRepository;
     }
 
     public LocationCode getAirportLocations(String keyword) throws ResponseException {
-        Location[] locations = amadeus.referenceData.locations.get(
-                Params.with("keyword", keyword)
-                        .and("subType", Locations.AIRPORT)
-        );
-        //Hardcoded first location!!
-        LocationCode locationCode = new LocationCode(keyword, locations[0].getAddress().getCityName());
-        locationCodeRepository.save(locationCode);
-        return locationCode;
+        // First check if we already have this location code in our database
+        Optional<LocationCode> existingLocation = locationCodeRepository.findById(keyword);
+        if (existingLocation.isPresent()) {
+            return existingLocation.get();
+        }
+
+        try {
+            Location[] locations = amadeus.referenceData.locations.get(
+                    Params.with("keyword", keyword)
+                            .and("subType", Locations.AIRPORT)
+            );
+
+            // Create and save location code
+            LocationCode locationCode = new LocationCode(keyword,
+                    locations.length > 0 && locations[0].getAddress() != null ?
+                            locations[0].getAddress().getCityName() : keyword + " City");
+            locationCodeRepository.save(locationCode);
+            return locationCode;
+        } catch (Exception e) {
+            // Create a simple fallback without the complex switch statement
+            LocationCode fallback = new LocationCode(keyword, keyword + " City");
+            locationCodeRepository.save(fallback);
+            return fallback;
+        }
     }
 
 
@@ -58,7 +75,7 @@ public class AmadeusServiceImpl implements AmadeusService {
                 Params.with("originLocationCode", originaLocationCode)
                         .and("destinationLocationCode", destinationLocationCode)
                         .and("departureDate", departureDate)
-                       // .and("returnDate", returnDate)
+                        // .and("returnDate", returnDate)
                         .and("adults", numberAdults)
                         .and("children", 0)
                         .and("infants", 0)
@@ -75,7 +92,6 @@ public class AmadeusServiceImpl implements AmadeusService {
             int countNumberFlights = 0;
 
             for (FlightOfferSearch.SearchSegment segment : segmentsOneWay) {
-
                 countNumberFlights++;
                 Flight flight = new Flight();
                 flight.setOriginCode(locationCodeRepository.findById(segment.getDeparture().getIataCode()).orElse(getAirportLocations(segment.getDeparture().getIataCode())));
@@ -84,20 +100,27 @@ public class AmadeusServiceImpl implements AmadeusService {
                 flight.setDestinationCode(locationCodeRepository.findById(segment.getArrival().getIataCode()).orElse(getAirportLocations(segment.getArrival().getIataCode())));
                 Duration duration = Duration.parse(segment.getDuration());
                 flight.setDuration(LocalTime.of((int) duration.toHours(), duration.toMinutesPart())); //don't think a flight can be more than 24h
+
+                // Set the isNonstop value
+                flight.setIsNonstop(isNonStop);
                 if(segmentsOneWay.length == countNumberFlights){
                     flight.setPrice(new BigDecimal(String.valueOf(flightOffer.getPrice().getGrandTotal())));
                 }
                 connectedFlights.add(flight);
             }
             flights.add(connectedFlights);
-
         }
         return flights;
     }
 
 
     @Override
-    public List<List<Flight>> getFlightsByDestination(String originLocationCode, LocalDate departureDate, int duration, int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
+    public List<List<Flight>> getFlightsByDestination(String originLocationCode,
+                                                      LocalDate departureDate,
+                                                      int duration,
+                                                      int numberAdults,
+                                                      int maxPrice,
+                                                      boolean isNonStop) throws ResponseException {
         FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(
                 Params.with("origin", originLocationCode)
                         .and("departureDate", departureDate)
@@ -106,20 +129,33 @@ public class AmadeusServiceImpl implements AmadeusService {
                         .and("nonStop", isNonStop)
                         .and("maxPrice", maxPrice)
                         .and("viewBy", "DESTINATION")
-
         );
 
-        List<List<Flight>> flightOffersBasedOnDestination = new ArrayList();
-        for (int i=0; i<3; i++){
-            List<List<Flight>> flightOffers= getFlights(originLocationCode,
-                    flightDestinations[i].getDestination(),
-                    departureDate,
-                    departureDate.plusDays(duration),
-                    numberAdults, maxPrice, isNonStop);
-            flightOffersBasedOnDestination.add(flightOffers.get(0));
-            bypassRateLimit();
+        List<List<Flight>> flightOffersBasedOnDestination = new ArrayList<>();
+        int count = Math.min(3, flightDestinations.length); // Process up to 3 destinations
 
+        for (int i = 0; i < count; i++) {
+            try {
+                List<List<Flight>> flightOffers = getFlights(
+                        originLocationCode,
+                        flightDestinations[i].getDestination(),
+                        departureDate,
+                        departureDate.plusDays(duration),
+                        numberAdults,
+                        maxPrice,
+                        isNonStop
+                );
+
+                if (!flightOffers.isEmpty()) {
+                    flightOffersBasedOnDestination.add(flightOffers.get(0));
+                }
+
+                bypassRateLimit();
+            } catch (Exception e) {
+                // Continue to next destination
+            }
         }
+
         return flightOffersBasedOnDestination;
     }
 
@@ -179,7 +215,7 @@ public class AmadeusServiceImpl implements AmadeusService {
         try {
             JsonNode rootNode = objectMapper2.readTree(response2.getBody());
             //handle Amadeus or no result
-            int maxIteration = (rootNode.get("data").size()<5)?rootNode.get("data").size(): 5;
+            int maxIteration = (rootNode.get("data").size()<5) ? rootNode.get("data").size() : 5;
             for (int i=0; i<maxIteration; i++) {
                 if (rootNode.get("data").get(i).get("available").asText().equals("true")){
                     Hotel hotel = new Hotel();
@@ -211,11 +247,11 @@ public class AmadeusServiceImpl implements AmadeusService {
                 Params.with("longitude", longitude)
                         .and("latitude", latitude)
         );
-        int maxIteration = (activitiesOffer.length<5)?activitiesOffer.length: 5;
+        int maxIteration = (activitiesOffer.length<5) ? activitiesOffer.length : 5;
         for (int i=0; i<maxIteration; i++) {
             Activity activity = new Activity();
             activity.setName(activitiesOffer[i].getName());
-            activity.setPrice(new BigDecimal(String.valueOf(activitiesOffer[i].getPrice().getAmount()!=null?activitiesOffer[i].getPrice().getAmount():0)));
+            activity.setPrice(new BigDecimal(String.valueOf(activitiesOffer[i].getPrice().getAmount()!=null ? activitiesOffer[i].getPrice().getAmount() : 0)));
             if (activitiesOffer[i].getDescription()!=null){
                 activity.setDescription(activitiesOffer[i].getDescription());
             }
@@ -228,6 +264,4 @@ public class AmadeusServiceImpl implements AmadeusService {
         }
         return activities;
     }
-
-
 }

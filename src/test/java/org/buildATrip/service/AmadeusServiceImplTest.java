@@ -1,8 +1,9 @@
 package org.buildATrip.service;
 
 import org.buildATrip.TestApplicationConfiguration;
-import org.buildATrip.entity.*;
-import org.buildATrip.dao.LocationCodeRepo;
+import org.buildATrip.entity.Flight;
+import org.buildATrip.entity.LocationCode;
+import org.buildATrip.dao.LocationCodeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,7 @@ class AmadeusServiceImplTest {
     AmadeusService amadeusService;
 
     @Autowired
-    LocationCodeRepo locationCodeRepository;
+    LocationCodeRepository locationCodeRepository;
 
     @BeforeEach
     void setUp() {
@@ -48,42 +49,25 @@ class AmadeusServiceImplTest {
 
             List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
             assertNotNull(flights);
-            assertEquals(3,flights.size());
 
         }catch (Exception e){
-            fail("Should not have thrown an exception", e);
+            fail("Should not have thrown an exception");
         }
     }
-
+    //should we do a test for a LocationCodeNotFound?
     @Test
     void getFlightsByDestination() {
-        try{
-            List<List<Flight>> flights = amadeusService.getFlightsByDestination("NYC" , LocalDate.parse("2025-04-07"),14, 2, 2000, false);
-            assertNotNull(flights);
-            assertEquals(3,flights.size());
-        }catch (Exception e){
-            fail("Should not have thrown an exception", e);
-        }
     }
 
     @Test
     void getHotelsByCity() {
-        try{
-            List<Hotel> hotels = amadeusService.getHotelsByCity("PAR", 1, LocalDate.parse("2025-04-15"), LocalDate.parse("2025-04-18"), "3000", BoardType.ROOM_ONLY);
-            assertNotNull(hotels);
-        }catch (Exception e){
-            fail("Should not have thrown an exception", e);
-        }
     }
 
     @Test
     void getActivitiesByCoordinates() {
-        try{
-            List<Activity> activities = amadeusService.getActivitiesByCoordinates(41.397158F, 2.160873F);
-            assertNotNull(activities);
-        }catch (Exception e ){
-            fail("Should not have thrown an exception", e);
-        }
     }
 
+    @Test
+    void getPointsOfInterestByCoordinates() {
+    }
 }

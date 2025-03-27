@@ -149,44 +149,84 @@ public class AmadeusServiceImpl implements AmadeusService {
             throw new RuntimeException(e);
         }
 
-        HotelOffer[] offers = amadeus.shopping.hotelOffers.get(
+
+//        HotelOffer[] offers = amadeus.shopping.hotelOffers.get(
+//                Params.with("hotelIds", hotelIds)
+//                        .and("adult", numberAdults)
+//                        .and("checkInDate", checkinDate)
+//                        .and("checkOutDate", checkoutDate)
+//                        .and("countryOfResidence", "CAN")
+//                        .and("roomQuantity", 1)
+//                        .and("price", priceRange)  //200-300 string!
+//                        //.and("currency", "CAD")
+//                        //.and("boardType", boardType)
+//
+//        );
+        Response response2 = amadeus.get("/v3/shopping/hotel-offers",
                 Params.with("hotelIds", hotelIds)
                         .and("adult", numberAdults)
                         .and("checkInDate", checkinDate)
                         .and("checkOutDate", checkoutDate)
-                        .and("countryOfResidence", "CAN")
+                        //.and("countryOfResidence", "CAN")
                         .and("roomQuantity", 1)
                         .and("price", priceRange)  //200-300 string!
                         //.and("currency", "CAD")
                         .and("boardType", boardType)
-
         );
-
+        ObjectMapper objectMapper2 = new ObjectMapper();
         List<Hotel> hotels = new ArrayList<>();
 
-        for (int i=0; i<5; i++){
-            if (offers[i].isAvailable()){
-                Arrays.stream(offers[i].getOffers()).findFirst();
+        try {
+            JsonNode rootNode = objectMapper2.readTree(response2.getBody());
+            //handle Amadeus or no result
+            int maxIteration = (rootNode.get("data").size()<5)?rootNode.get("data").size(): 5;
+            for (int i=0; i<maxIteration; i++) {
+                if (rootNode.get("data").get(i).get("available").asText().equals("true")){
+                    Hotel hotel = new Hotel();
 
+                    hotel.setName(rootNode.get("data").get(i).get("hotel").get("name").asText());
+                    //currency is not right, taking only the first offer by hotel
+                    hotel.setPrice(new BigDecimal(rootNode.get("data").get(i).get("offers").get(0).get("price").get("total").asText()));
+                    hotel.setCheckinDate(checkinDate);
+                    hotel.setCheckoutDate(checkoutDate);
+                    hotel.setLongitude(new BigDecimal(rootNode.get("data").get(i).get("hotel").get("longitude").asText()));
+                    hotel.setLatitude(new BigDecimal(rootNode.get("data").get(i).get("hotel").get("latitude").asText()));
+                    hotel.setBoardType(boardType);
+                    //hotel.setAddress(rootNode.get("data").get(i).get);
+                    hotels.add(hotel);
 
+                }
             }
-
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
+
         return hotels;
     }
 
     @Override
-    public List<Activity> getActivitiesByCoordinates(float latitude, float longitude) {
+    public List<Activity> getActivitiesByCoordinates(float latitude, float longitude) throws ResponseException {
         List<Activity> activities = new ArrayList<>();
-//        com.amadeus.resources.Activity[] activities = amadeus.shopping.activities.get(
-//                Params.with()
-//        );
+        com.amadeus.resources.Activity[] activitiesOffer = amadeus.shopping.activities.get(
+                Params.with("longitude", longitude)
+                        .and("latitude", latitude)
+        );
+        int maxIteration = (activitiesOffer.length<5)?activitiesOffer.length: 5;
+        for (int i=0; i<maxIteration; i++) {
+            Activity activity = new Activity();
+            activity.setName(activitiesOffer[i].getName());
+            activity.setPrice(new BigDecimal(String.valueOf(activitiesOffer[i].getPrice().getAmount()!=null?activitiesOffer[i].getPrice().getAmount():0)));
+            if (activitiesOffer[i].getDescription()!=null){
+                activity.setDescription(activitiesOffer[i].getDescription());
+            }
+            if (activitiesOffer[i].getRating()!=null){
+                activity.setRating(Double.parseDouble(activitiesOffer[i].getRating()));
+            }
+            activity.setLatitude(new BigDecimal(String.valueOf(activitiesOffer[i].getGeoCode().getLatitude())));
+            activity.setLongitude(new BigDecimal(String.valueOf(activitiesOffer[i].getGeoCode().getLongitude())));
+        }
         return activities;
     }
 
-    @Override
-    public PointOfInterest[] getPointsOfInterestByCoordinates(float latitude, float longitude, ActivityType[] activityTypes) {
-        return new PointOfInterest[0];
-    }
 
 }

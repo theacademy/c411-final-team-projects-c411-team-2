@@ -136,4 +136,9 @@ public interface FlightService {
      * @return All saved flights with established connections
      */
     List<Flight> saveFlightsToItinerary(List<Flight> outboundFlights, List<Flight> returnFlights, Integer itineraryId);
+
+    /**
+     * Delete all itinenary (mainly used for test clean up)
+     */
+    void deleteAllFlight();
 }

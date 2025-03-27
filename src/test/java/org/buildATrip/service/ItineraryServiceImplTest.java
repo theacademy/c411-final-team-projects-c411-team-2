@@ -1,10 +1,8 @@
 package org.buildATrip.service;
 
 import org.buildATrip.TestApplicationConfiguration;
-import org.buildATrip.entity.BoardType;
-import org.buildATrip.entity.Hotel;
-import org.buildATrip.entity.Itinerary;
-import org.buildATrip.entity.User;
+import org.buildATrip.dao.LocationCodeRepository;
+import org.buildATrip.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +30,21 @@ class ItineraryServiceImplTest {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ActivityService activityService;
+
+    @Autowired
+    FlightService flightService;
+
+    @Autowired
+    private LocationCodeRepository locationCodeRepository;
+
     @BeforeEach
     public void setUp() {
         hotelService.deleteAllHotel();
+        activityService.deleteAllActivity();
+        flightService.deleteAllFlight();
+        locationCodeRepository.deleteAll();
         itineraryService.deleteAllItinerary();
         userService.deleteAllUser();
     }
@@ -89,5 +100,99 @@ class ItineraryServiceImplTest {
         assertEquals(1, updatedHotel.getItineraryList().size(), "Should contains 1 itinenary");
     }
 
-    
+
+    @Test
+    void addFlightToItinenary() {
+
+        LocationCode originCode = new LocationCode("JFK", "New York");
+        LocationCode destCode = new LocationCode("LAX", "Los Angeles");
+
+        locationCodeRepository.save(originCode);
+        locationCodeRepository.save(destCode);
+
+        Flight testFlight = new Flight();
+        testFlight.setPrice(new BigDecimal("299.99"));
+        testFlight.setDuration(LocalTime.of(6, 0));
+        testFlight.setDate(LocalDate.now());
+        testFlight.setDepartureTime(LocalTime.of(10, 0));
+        testFlight.setIsNonstop(true);
+        testFlight.setOriginCode(originCode);
+        testFlight.setDestinationCode(destCode);
+
+        Flight flightWithId = flightService.saveFlight(testFlight);
+
+        User user1 = new User();
+        user1.setFirstName("John");
+        user1.setLastName("Doe");
+        user1.setEmail("john.doe@example.com");
+        user1.setPassword("securepassword");
+        user1.setOriginCity("New York");
+        user1.setDateOfBirth(LocalDate.of(1995, 5, 20));
+
+        User user1WithId = userService.registerUser(user1);
+
+        Itinerary itinerary = new Itinerary();
+        itinerary.setNumAdults(2);
+        itinerary.setPriceRangeFlight(new BigDecimal("500.00"));
+        itinerary.setPriceRangeHotel(new BigDecimal("300.00"));
+        itinerary.setPriceRangeActivity(new BigDecimal("150.00"));
+        itinerary.setConfirmed(false);
+        itinerary.setTotalPrice(new BigDecimal("950.00"));
+        itinerary.setStartDate(LocalDate.of(2025, 6, 10));
+        itinerary.setEndDate(LocalDate.of(2025, 6, 20));
+        itinerary.setHotelsList(new ArrayList<>());
+        itinerary.setActivitiesList(new ArrayList<>());
+        itinerary.setFlightsList(new ArrayList<>());
+        itinerary.setUser(user1WithId);
+
+        Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
+
+        Itinerary updatedItinerary = itineraryService.addFlightToItinerary(insertItinerary.getId(), flightWithId.getFlightId());
+        assertEquals(1, updatedItinerary.getFlightsList().size(), "Should contains only 1 flight");
+
+    }
+
+    @Test
+    void addActivityToItinenary() {
+
+        Activity activity = new Activity();
+        activity.setName("Skydiving");
+        activity.setDescription("Jump from a plane and experience freedom.");
+        activity.setRating(4.8);
+        activity.setPrice(new BigDecimal("200.0"));
+        activity.setLatitude(new BigDecimal("40.7128"));
+        activity.setLongitude(new BigDecimal("-74.0060"));
+
+        Activity activityWithId = activityService.createActivity(activity);
+
+        User user1 = new User();
+        user1.setFirstName("John");
+        user1.setLastName("Doe");
+        user1.setEmail("john.doe@example.com");
+        user1.setPassword("securepassword");
+        user1.setOriginCity("New York");
+        user1.setDateOfBirth(LocalDate.of(1995, 5, 20));
+
+        User user1WithId = userService.registerUser(user1);
+
+        Itinerary itinerary = new Itinerary();
+        itinerary.setNumAdults(2);
+        itinerary.setPriceRangeFlight(new BigDecimal("500.00"));
+        itinerary.setPriceRangeHotel(new BigDecimal("300.00"));
+        itinerary.setPriceRangeActivity(new BigDecimal("150.00"));
+        itinerary.setConfirmed(false);
+        itinerary.setTotalPrice(new BigDecimal("950.00"));
+        itinerary.setStartDate(LocalDate.of(2025, 6, 10));
+        itinerary.setEndDate(LocalDate.of(2025, 6, 20));
+        itinerary.setHotelsList(new ArrayList<>());
+        itinerary.setActivitiesList(new ArrayList<>());
+        itinerary.setFlightsList(new ArrayList<>());
+        itinerary.setUser(user1WithId);
+
+        Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
+        Itinerary updatedItinerary = itineraryService.addActivityToItinerary(insertItinerary.getId(), activityWithId.getId());
+
+        assertEquals(1, updatedItinerary.getActivitiesList().size(), "Should contains only 1 activity");
+
+    }
 }

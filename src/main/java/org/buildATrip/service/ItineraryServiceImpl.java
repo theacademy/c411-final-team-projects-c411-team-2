@@ -64,9 +64,22 @@ public class ItineraryServiceImpl implements ItineraryService {
         Itinerary currentItinerary = itineraryRepo.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinenary not found"));
         Flight newFlight = flightRepo.findById(flightId)
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException("Flight not found"));
 
-        return null;
+        if(currentItinerary.getFlightsList() == null) {
+            currentItinerary.setFlightsList(new ArrayList<>());
+        }
+
+        currentItinerary.getFlightsList().add(newFlight);
+
+        if (newFlight.getItineraryList() == null) {
+            newFlight.setItineraryList(new ArrayList<>());
+        }
+        newFlight.getItineraryList().add(currentItinerary);
+        Itinerary updatedItinerary = itineraryRepo.save(currentItinerary);
+        // update @ManyToMany field
+        flightRepo.save(newFlight);
+        return updatedItinerary;
     }
 
     @Override
@@ -81,14 +94,14 @@ public class ItineraryServiceImpl implements ItineraryService {
             currentItinerary.setHotelsList(new ArrayList<>());
         }
 
-        currentItinerary.getHotelsList().add(newHotel); // after this method, List<Itinenary> from Hotel class should also be updated bc its a bidirectional
+        currentItinerary.getHotelsList().add(newHotel);
 
-        // allowed to update @ManyToMany field
         if (newHotel.getItineraryList() == null) {
             newHotel.setItineraryList(new ArrayList<>());
         }
         newHotel.getItineraryList().add(currentItinerary);
         Itinerary updatedItinerary = itineraryRepo.save(currentItinerary);
+        // update @ManyToMany field
         hotelRepo.save(newHotel);
         return updatedItinerary;
     }
@@ -107,7 +120,14 @@ public class ItineraryServiceImpl implements ItineraryService {
 
         currentItinerary.getActivitiesList().add(newActivity);
 
-        return itineraryRepo.save(currentItinerary);
+        if (newActivity.getItineraryList() == null) {
+            newActivity.setItineraryList(new ArrayList<>());
+        }
+        newActivity.getItineraryList().add(currentItinerary);
+        Itinerary updatedItinerary = itineraryRepo.save(currentItinerary);
+        // update @ManyToMany field
+        activityRepo.save(newActivity);
+        return updatedItinerary;
     }
 
     @Override

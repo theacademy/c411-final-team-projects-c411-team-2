@@ -199,4 +199,9 @@ public class FlightServiceImpl implements FlightService {
 
         return allSavedFlights;
     }
+
+    @Override
+    public void deleteAllFlight() {
+        flightRepository.deleteAll();
+    }
 }

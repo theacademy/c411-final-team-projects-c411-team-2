@@ -1,6 +1,8 @@
 package org.buildATrip.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -41,6 +43,7 @@ public class Hotel {
     private BoardType boardType;
 
     @ManyToMany(mappedBy = "hotelsList", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Itinerary> itineraryList;
 
 

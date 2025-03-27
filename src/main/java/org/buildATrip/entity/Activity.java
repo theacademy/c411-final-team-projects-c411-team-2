@@ -1,10 +1,12 @@
 package org.buildATrip.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "activity")
@@ -34,6 +36,7 @@ public class Activity {
     private BigDecimal longitude;
 
     @ManyToMany(mappedBy = "activitiesList", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Itinerary> itineraryList;
 
     public Activity() {
@@ -93,5 +96,13 @@ public class Activity {
 
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
+    }
+
+    public List<Itinerary> getItineraryList() {
+        return itineraryList;
+    }
+
+    public void setItineraryList(List<Itinerary> itineraryList) {
+        this.itineraryList = itineraryList;
     }
 }

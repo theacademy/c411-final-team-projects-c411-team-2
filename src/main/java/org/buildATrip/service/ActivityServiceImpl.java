@@ -53,4 +53,11 @@ public class ActivityServiceImpl implements ActivityService{
     public void deleteActivity(int id) {
         activityRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteAllActivity() {
+        activityRepository.deleteAll();
+    }
+
+
 }

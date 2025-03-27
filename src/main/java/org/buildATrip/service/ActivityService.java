@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ActivityService {
-    public List<Activity> searchActivities(float latitude, float longitude, BigDecimal budgetActivity);
+    public List<Activity> searchActivities(float latitude, float longitude, BigDecimal activityBudget);
 
     public Activity getActivityById(int id);
 

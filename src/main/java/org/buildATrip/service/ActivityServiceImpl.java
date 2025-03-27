@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityServiceImpl implements ActivityService{
@@ -23,10 +24,14 @@ public class ActivityServiceImpl implements ActivityService{
     }
 
     @Override
-    public List<Activity> searchActivities(float latitude, float longitude, BigDecimal budgetActivity) {
-//        amadeusService.getActivitiesByCoordinates(latitude, longitude).stream().filter((a) -> new BigDecimal(a.price.toString()).compareTo(budgetActivity) <= 0);
+    public List<Activity> searchActivities(float latitude, float longitude, BigDecimal activityBudget) {
+
+        return amadeusService.getActivitiesByCoordinates(latitude, longitude)
+                .stream().
+                filter(activity -> activity.getPrice().compareTo(activityBudget) <= 0)
+                .collect(Collectors.toList());
         //Activity[] getActivitiesByCoordinates(float latitude, float longitude)
-        return List.of();
+
     }
 
     @Override

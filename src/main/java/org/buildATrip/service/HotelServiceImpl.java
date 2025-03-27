@@ -1,5 +1,6 @@
 package org.buildATrip.service;
 
+import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.dao.HotelRepo;
 import org.buildATrip.entity.BoardType;
 import org.buildATrip.entity.Hotel;
@@ -30,7 +31,11 @@ public class HotelServiceImpl implements HotelService {
         if(numberAdults == null) {
             numberAdults = 1;
         }
-        return new ArrayList<>(List.of(amadeusService.getHotelsByCity(cityOriginCode, numberAdults, checkIn, checkOut, hotelBudget, boardType)));
+        try {
+            return new ArrayList<>(amadeusService.getHotelsByCity(cityOriginCode, numberAdults, checkIn, checkOut, hotelBudget, boardType));
+        } catch (ResponseException ignored) {
+            return new ArrayList<>();
+        }
     }
 
     @Override

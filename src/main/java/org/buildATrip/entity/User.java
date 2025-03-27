@@ -28,6 +28,10 @@ public class User {
     @Column(name = "dob")
     private LocalDate dateOfBirth;
 
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private List<Itinerary> itineraries;
+
     public User() {}
 
     public int getId() {

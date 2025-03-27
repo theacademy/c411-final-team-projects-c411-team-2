@@ -1,11 +1,13 @@
 package org.buildATrip.controller;
 
+import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.entity.Activity;
 import org.buildATrip.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,8 +55,12 @@ public class ActivityController {
                                                            @RequestParam float longitude,
                                                            @RequestParam BigDecimal budgetActivity) {
 
-        List<Activity> activities = activityService.searchActivities(latitude, longitude, budgetActivity);
-        return ResponseEntity.ok(activities);
+        try {
+            List<Activity> activities = activityService.searchActivities(latitude, longitude, budgetActivity);
+            return new ResponseEntity<>(activities, HttpStatus.OK);
+        } catch (ResponseException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error searching activities: " + e.getMessage(), e);
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package org.buildATrip.service;
 
+import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.dao.ActivityRepository;
 import org.buildATrip.entity.Activity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,12 @@ public class ActivityServiceImpl implements ActivityService{
     }
 
     @Override
-    public List<Activity> searchActivities(float latitude, float longitude, BigDecimal activityBudget) {
+    public List<Activity> searchActivities(float latitude, float longitude, BigDecimal activityBudget) throws ResponseException {
 
         return amadeusService.getActivitiesByCoordinates(latitude, longitude)
                 .stream().
                 filter(activity -> activity.getPrice().compareTo(activityBudget) <= 0)
                 .collect(Collectors.toList());
-        //Activity[] getActivitiesByCoordinates(float latitude, float longitude)
 
     }
 

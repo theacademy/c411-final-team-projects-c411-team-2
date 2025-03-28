@@ -123,7 +123,7 @@ public class FlightServiceImpl implements FlightService {
         if (!locationCodeRepository.existsById(code)) {
             // If not, try to fetch it from Amadeus
             try {
-                amadeusService.getAirportLocations(code);
+                amadeusService.getCityLocations(code);
             } catch (Exception e) {
                 // If there's an error but it looks like a valid airport code,
                 // create a placeholder entry

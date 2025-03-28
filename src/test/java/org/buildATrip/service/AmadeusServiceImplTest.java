@@ -40,7 +40,7 @@ class AmadeusServiceImplTest {
     @Test
     void getLocation() {
         try {
-            LocationCode actual = amadeusService.getAirportLocations("LHR");
+            LocationCode actual = amadeusService.getCityLocations("LHR");
             assertEquals("London".toUpperCase(), actual.getCityName());
 
             assertNotNull(locationCodeRepository.findById("LHR"));

@@ -59,6 +59,6 @@ public class LocationCodeService {
         }
 
         // If not found at all, call Amadeus to get it
-        return amadeusService.getAirportLocations(keyword);
+        return amadeusService.getCityLocations(keyword);
     }
 }

@@ -14,7 +14,7 @@ public class AmadeusServiceImplStub implements AmadeusService{
     public static final String FLIGHT_TYPE_RETURN = "RETURN";
 
     @Override
-    public LocationCode getAirportLocations(String keyword) throws ResponseException {
+    public LocationCode getCityLocations(String keyword) throws ResponseException {
         if (keyword.equals("JFK")){
             return new LocationCode("JFK", "NEW YORK");
         }

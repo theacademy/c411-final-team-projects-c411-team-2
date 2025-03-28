@@ -3,7 +3,6 @@ package org.buildATrip.service;
 import com.amadeus.Response;
 import com.amadeus.resources.FlightDestination;
 import com.amadeus.resources.FlightOfferSearch;
-import com.amadeus.resources.HotelOffer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 import com.amadeus.Amadeus;
 import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
-import com.amadeus.referenceData.Locations;
-import com.amadeus.resources.Location;
 import org.buildATrip.dao.LocationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +37,7 @@ public class AmadeusServiceImpl implements AmadeusService {
         this.locationCodeRepository = locationCodeRepository;
     }
 
-    public LocationCode getAirportLocations(String keyword) throws ResponseException {
+    public LocationCode getCityLocations(String keyword) throws ResponseException {
         // First check if we already have this location code in our database
         Optional<LocationCode> existingLocation = locationCodeRepository.findById(keyword);
         if (existingLocation.isPresent()) {
@@ -49,15 +45,26 @@ public class AmadeusServiceImpl implements AmadeusService {
         }
 
         try {
-            Location[] locations = amadeus.referenceData.locations.get(
+            Response response = amadeus.get("/v1/reference-data/locations/cities",
                     Params.with("keyword", keyword)
-                            .and("subType", Locations.AIRPORT)
-            );
+                            .and("max", 1));
 
-            // Create and save location code
-            LocationCode locationCode = new LocationCode(keyword,
-                    locations.length > 0 && locations[0].getAddress() != null ?
-                            locations[0].getAddress().getCityName() : keyword + " City");
+            ObjectMapper objectMapper = new ObjectMapper();
+            LocationCode locationCode;
+            try {
+                JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+                locationCode = new LocationCode(rootNode.get("data").get(0).get("iataCode").asText(),rootNode.get("data").get(0).get("name").asText());
+
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (locationCode==null){
+                throw new Exception("Could not find a city with name " + keyword + " ");
+            }
+
+            //save location code
             locationCodeRepository.save(locationCode);
             return locationCode;
         } catch (Exception e) {
@@ -94,10 +101,10 @@ public class AmadeusServiceImpl implements AmadeusService {
             for (FlightOfferSearch.SearchSegment segment : segmentsOneWay) {
                 countNumberFlights++;
                 Flight flight = new Flight();
-                flight.setOriginCode(locationCodeRepository.findById(segment.getDeparture().getIataCode()).orElse(getAirportLocations(segment.getDeparture().getIataCode())));
+                flight.setOriginCode(locationCodeRepository.findById(segment.getDeparture().getIataCode()).orElse(getCityLocations(segment.getDeparture().getIataCode())));
                 flight.setDate(LocalDateTime.parse(segment.getDeparture().getAt()).toLocalDate());
                 flight.setDepartureTime(LocalDateTime.parse(segment.getDeparture().getAt()).toLocalTime());
-                flight.setDestinationCode(locationCodeRepository.findById(segment.getArrival().getIataCode()).orElse(getAirportLocations(segment.getArrival().getIataCode())));
+                flight.setDestinationCode(locationCodeRepository.findById(segment.getArrival().getIataCode()).orElse(getCityLocations(segment.getArrival().getIataCode())));
                 Duration duration = Duration.parse(segment.getDuration());
                 flight.setDuration(LocalTime.of((int) duration.toHours(), duration.toMinutesPart())); //don't think a flight can be more than 24h
 

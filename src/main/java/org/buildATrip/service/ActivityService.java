@@ -2,6 +2,7 @@ package org.buildATrip.service;
 
 import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.entity.Activity;
+import org.buildATrip.entity.Itinerary;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,4 +20,6 @@ public interface ActivityService {
     public void deleteActivity(int id);
 
     public void deleteAllActivity();
+
+
 }

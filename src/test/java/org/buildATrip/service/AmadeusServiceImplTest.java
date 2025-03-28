@@ -1,8 +1,8 @@
 package org.buildATrip.service;
 
+import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.TestApplicationConfiguration;
-import org.buildATrip.entity.Flight;
-import org.buildATrip.entity.LocationCode;
+import org.buildATrip.entity.*;
 import org.buildATrip.dao.LocationCodeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,43 +38,73 @@ class AmadeusServiceImplTest {
     }
 
     @Test
-    void getLocation(){
-       try {
-           LocationCode actual = amadeusService.getAirportLocations("LHR");
-           assertEquals("London".toUpperCase(), actual.getCityName());
+    void getLocation() {
+        try {
+            LocationCode actual = amadeusService.getAirportLocations("LHR");
+            assertEquals("London".toUpperCase(), actual.getCityName());
 
-           assertNotNull(locationCodeRepository.findById("LHR"));
+            assertNotNull(locationCodeRepository.findById("LHR"));
 
-       }catch (Exception e){
-           fail("Should not have thrown exception");
-       }
+        } catch (Exception e) {
+            fail("Should not have thrown exception");
+        }
 
     }
+
     @Test
     void getFlights() {
         try {
 
             List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
             assertNotNull(flights);
+            assertEquals(3, flights.size());
 
-        }catch (Exception e){
-            fail("Should not have thrown an exception");
+        } catch (Exception e) {
+            fail("Should not have thrown an exception", e);
         }
     }
-    //should we do a test for a LocationCodeNotFound?
+
     @Test
     void getFlightsByDestination() {
+        try {
+            List<List<Flight>> flights = amadeusService.getFlightsByDestination("NYC", LocalDate.parse("2025-04-07"), 14, 2, 2000, false);
+            assertNotNull(flights);
+            assertEquals(3, flights.size());
+        } catch (Exception e) {
+            fail("Should not have thrown an exception", e);
+        }
+    }
+
+    @Test
+    void getFlightsByWrongDestination() {
+        try {
+            List<List<Flight>> flights = amadeusService.getFlightsByDestination("JKF", LocalDate.parse("2025-04-07"), 14, 2, 2000, false);
+            fail("Should not have thrown an exception");
+        } catch (ResponseException e) {
+            return;
+        }
+        catch (Exception e) {
+            fail("Should not have thrown an exception");
+        }
     }
 
     @Test
     void getHotelsByCity() {
+        try {
+            List<Hotel> hotels = amadeusService.getHotelsByCity("PAR", 1, LocalDate.parse("2025-04-15"), LocalDate.parse("2025-04-18"), "3000", BoardType.ROOM_ONLY);
+            assertNotNull(hotels);
+        } catch (Exception e) {
+            fail("Should not have thrown an exception", e);
+        }
     }
 
     @Test
     void getActivitiesByCoordinates() {
-    }
-
-    @Test
-    void getPointsOfInterestByCoordinates() {
+        try {
+            List<Activity> activities = amadeusService.getActivitiesByCoordinates(41.397158F, 2.160873F);
+            assertNotNull(activities);
+        } catch (Exception e) {
+            fail("Should not have thrown an exception", e);
+        }
     }
 }

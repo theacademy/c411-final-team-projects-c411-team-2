@@ -12,25 +12,32 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ItineraryServiceImpl implements ItineraryService {
-
 
     private ItineraryRepo itineraryRepo;
     private HotelRepo hotelRepo;
     private ActivityRepository activityRepo;
     private FlightRepository flightRepo;
     private UserRepository userRepo;
+    private FlightService flightService;
 
     @Autowired
-    public ItineraryServiceImpl(ItineraryRepo itineraryRepo, HotelRepo hotelRepo, ActivityRepository activityRepo, FlightRepository flightRepo, UserRepository userRepo) {
+    public ItineraryServiceImpl(ItineraryRepo itineraryRepo, HotelRepo hotelRepo,
+                                ActivityRepository activityRepo, FlightRepository flightRepo,
+                                UserRepository userRepo, FlightService flightService) {
         this.itineraryRepo = itineraryRepo;
         this.hotelRepo = hotelRepo;
         this.activityRepo = activityRepo;
         this.flightRepo = flightRepo;
         this.userRepo = userRepo;
+        this.flightService = flightService;
+    }
+
+    // Getter for FlightService to be used by controller
+    public FlightService getFlightService() {
+        return this.flightService;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Transactional
     public Itinerary addFlightToItinerary(int itineraryId, int flightId) {
         Itinerary currentItinerary = itineraryRepo.findById(itineraryId)
-                .orElseThrow(() -> new EntityNotFoundException("Itinenary not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
         Flight newFlight = flightRepo.findById(flightId)
                 .orElseThrow(() -> new EntityNotFoundException("Flight not found"));
 
@@ -137,5 +144,69 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Override
     public void deleteAllItinerary() {
         itineraryRepo.deleteAll();
+    }
+
+    // Methods for removing resources from itineraries could be added here
+    @Transactional
+    public void removeFlightFromItinerary(int itineraryId, int flightId) {
+        Itinerary itinerary = itineraryRepo.findById(itineraryId)
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+        Flight flight = flightRepo.findById(flightId)
+                .orElseThrow(() -> new EntityNotFoundException("Flight not found"));
+
+        // Remove the relationship from both sides
+        if (itinerary.getFlightsList() != null) {
+            itinerary.getFlightsList().remove(flight);
+        }
+
+        if (flight.getItineraryList() != null) {
+            flight.getItineraryList().remove(itinerary);
+        }
+
+        // Save both entities
+        itineraryRepo.save(itinerary);
+        flightRepo.save(flight);
+    }
+
+    @Transactional
+    public void removeHotelFromItinerary(int itineraryId, String hotelId) {
+        Itinerary itinerary = itineraryRepo.findById(itineraryId)
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+        Hotel hotel = hotelRepo.findById(hotelId)
+                .orElseThrow(() -> new EntityNotFoundException("Hotel not found"));
+
+        // Remove the relationship from both sides
+        if (itinerary.getHotelsList() != null) {
+            itinerary.getHotelsList().remove(hotel);
+        }
+
+        if (hotel.getItineraryList() != null) {
+            hotel.getItineraryList().remove(itinerary);
+        }
+
+        // Save both entities
+        itineraryRepo.save(itinerary);
+        hotelRepo.save(hotel);
+    }
+
+    @Transactional
+    public void removeActivityFromItinerary(int itineraryId, int activityId) {
+        Itinerary itinerary = itineraryRepo.findById(itineraryId)
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+        Activity activity = activityRepo.findById(activityId)
+                .orElseThrow(() -> new EntityNotFoundException("Activity not found"));
+
+        // Remove the relationship from both sides
+        if (itinerary.getActivitiesList() != null) {
+            itinerary.getActivitiesList().remove(activity);
+        }
+
+        if (activity.getItineraryList() != null) {
+            activity.getItineraryList().remove(itinerary);
+        }
+
+        // Save both entities
+        itineraryRepo.save(itinerary);
+        activityRepo.save(activity);
     }
 }

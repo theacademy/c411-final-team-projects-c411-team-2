@@ -1,40 +1,40 @@
 package org.buildATrip.service;
 
-import org.buildATrip.dao.UserRepository;
 import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-@Service
-public class UserServiceImpl implements UserService {
+public class UserServiceStubImpl implements UserService{
+    private final User user1;
 
-    private final UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private ItineraryService itineraryService;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserServiceStubImpl(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+        user1 = new User();
+        user1.setId(1);
+        user1.setFirstName("John");
+        user1.setLastName("Doe");
+        user1.setEmail("john.doe@example.com");
+        user1.setPassword(passwordEncoder.encode("securepassword"));
+        user1.setOriginCity("New York");
+        user1.setDateOfBirth(LocalDate.of(1995, 5, 20));
     }
-
     @Override
     public User getUserById(int id) {
-        return userRepository.findById(id).orElse(null);
+        return id == user1.getId() ? user1 : null;
     }
 
     @Override
-    public User getUserByEmail(String email){
-        return userRepository.findByEmail(email).orElse(null);
+    public User getUserByEmail(String email) {
+        return user1.getEmail().equals(email) ? user1 : null;
     }
+
     @Override
     public User registerUser(User user) {
         boolean isInvalid = false;
@@ -66,44 +66,43 @@ public class UserServiceImpl implements UserService {
         if (!isInvalid) {
 //            hash the password before saving it
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return userRepository.save(user);
+            user.setId(2);
+            return user;
         } else {
             return user;
         }
-
     }
 
     @Override
     public User login(String email, String password) {
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user != null) {
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return user;
-            }
-        }
-        return null;
+        return (user1.getEmail().equals(email) && user1.getPassword().equals(password))
+                ? user1
+                : null;
     }
 
     @Override
-    public User updateUser(int id, User user) {
-        if(id == user.getId() && userRepository.existsById(id)) {
-            return userRepository.save(user);
+    public User updateUser(int id, User updatedUser) {
+        if (id == user1.getId()) {
+            user1.setFirstName(updatedUser.getFirstName());
+            user1.setLastName(updatedUser.getLastName());
+            user1.setOriginCity(updatedUser.getOriginCity());
+            return user1;
         }
         return null;
     }
 
     @Override
     public void deleteUser(int id) {
-        userRepository.deleteById(id);
+        //nothing to do
     }
 
     @Override
     public void deleteAllUser() {
-        userRepository.deleteAll();
+        //nothing to do
     }
 
     @Override
     public List<Itinerary> getItinerariesForUser(int userId) {
-        return userRepository.findItinerariesByUserId(userId);
+        return List.of();
     }
 }

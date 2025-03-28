@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,6 +48,55 @@ class ItineraryServiceImplTest {
         locationCodeRepository.deleteAll();
         itineraryService.deleteAllItinerary();
         userService.deleteAllUser();
+    }
+
+    @Test
+    void findItineraryByUserId() {
+        User user1 = new User();
+        user1.setFirstName("Peter");
+        user1.setLastName("Parker");
+        user1.setEmail("spiderman@example.com");
+        user1.setPassword("spider123");
+        user1.setOriginCity("New York");
+        user1.setDateOfBirth(LocalDate.of(1990, 2, 11));
+
+        User user1WithId = userService.registerUser(user1);
+
+        Itinerary itinerary = new Itinerary();
+        itinerary.setNumAdults(1);
+        itinerary.setPriceRangeFlight(new BigDecimal("900.00"));
+        itinerary.setPriceRangeHotel(new BigDecimal("560.00"));
+        itinerary.setPriceRangeActivity(new BigDecimal("250.00"));
+        itinerary.setConfirmed(false);
+        itinerary.setTotalPrice(new BigDecimal("0"));
+        itinerary.setStartDate(LocalDate.of(2025, 7, 9));
+        itinerary.setEndDate(LocalDate.of(2025, 7, 14));
+        itinerary.setHotelsList(new ArrayList<>());
+        itinerary.setActivitiesList(new ArrayList<>());
+        itinerary.setFlightsList(new ArrayList<>());
+
+        Itinerary secondItinerary = new Itinerary();
+        secondItinerary.setNumAdults(1);
+        secondItinerary.setPriceRangeFlight(new BigDecimal("500.00"));
+        secondItinerary.setPriceRangeHotel(new BigDecimal("300.00"));
+        secondItinerary.setPriceRangeActivity(new BigDecimal("200.00"));
+        secondItinerary.setConfirmed(false);
+        secondItinerary.setTotalPrice(new BigDecimal("0"));
+        secondItinerary.setStartDate(LocalDate.of(2027, 2, 3));
+        secondItinerary.setEndDate(LocalDate.of(2027, 2, 5));
+        secondItinerary.setHotelsList(new ArrayList<>());
+        secondItinerary.setActivitiesList(new ArrayList<>());
+        secondItinerary.setFlightsList(new ArrayList<>());
+
+        itinerary.setUser(user1WithId);
+        secondItinerary.setUser(user1WithId);
+
+        itineraryService.createItinerary(itinerary);
+        itineraryService.createItinerary(secondItinerary);
+
+        List<Itinerary> itineraryList = userService.getItinerariesForUser(user1WithId.getId());
+        assertNotNull(itineraryList);
+        assertEquals(2, itineraryList.size());
     }
 
     @Test

@@ -1,7 +1,12 @@
 package org.buildATrip.controller;
 
+import org.buildATrip.entity.Activity;
+import org.buildATrip.entity.Flight;
+import org.buildATrip.entity.Hotel;
 import org.buildATrip.entity.Itinerary;
+import org.buildATrip.service.FlightService;
 import org.buildATrip.service.ItineraryService;
+import org.buildATrip.service.ItineraryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -13,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/itinerary")
@@ -95,7 +101,7 @@ public class ItineraryController {
         }
     }
 
-    // Add a flight to an itinerary
+    // Add a flight to an itinerary - single flight version
     @PostMapping("/{itineraryId}/flight/{flightId}")
     public ResponseEntity<Itinerary> addFlightToItinerary(@PathVariable int itineraryId, @PathVariable int flightId) {
         try {
@@ -106,6 +112,80 @@ public class ItineraryController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error adding flight to itinerary: " + e.getMessage(), e);
+        }
+    }
+
+    // Add flights to an itinerary - handles flight lists (outbound)
+    @PostMapping("/{itineraryId}/flights/outbound")
+    public ResponseEntity<Itinerary> addOutboundFlightsToItinerary(
+            @PathVariable int itineraryId,
+            @RequestBody List<Flight> flights) {
+        try {
+            // Delegate to the flight service which handles the complexity of connected flights
+            // and then updates the itinerary
+            FlightService flightService =
+                    ((ItineraryServiceImpl)itineraryService).getFlightService();
+
+            flightService.selectAndSaveOutboundFlights(flights, itineraryId);
+
+            // Return the updated itinerary
+            Itinerary updatedItinerary = itineraryService.getItineraryById(itineraryId);
+            return new ResponseEntity<>(updatedItinerary, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error adding outbound flights to itinerary: " + e.getMessage(), e);
+        }
+    }
+
+    // Add flights to an itinerary - handles flight lists (return)
+    @PostMapping("/{itineraryId}/flights/return")
+    public ResponseEntity<Itinerary> addReturnFlightsToItinerary(
+            @PathVariable int itineraryId,
+            @RequestBody List<Flight> flights) {
+        try {
+            // Delegate to the flight service which handles the complexity of connected flights
+            // and then updates the itinerary
+            FlightService flightService =
+                    ((ItineraryServiceImpl)itineraryService).getFlightService();
+
+            flightService.selectAndSaveReturnFlights(flights, itineraryId);
+
+            // Return the updated itinerary
+            Itinerary updatedItinerary = itineraryService.getItineraryById(itineraryId);
+            return new ResponseEntity<>(updatedItinerary, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error adding return flights to itinerary: " + e.getMessage(), e);
+        }
+    }
+
+    // Add both outbound and return flights to an itinerary
+    @PostMapping("/{itineraryId}/flights/complete")
+    public ResponseEntity<Itinerary> addCompleteFlightsToItinerary(
+            @PathVariable int itineraryId,
+            @RequestBody Map<String, List<Flight>> flightGroups) {
+        try {
+            List<org.buildATrip.entity.Flight> outboundFlights = flightGroups.get("outbound");
+            List<org.buildATrip.entity.Flight> returnFlights = flightGroups.get("return");
+
+            // Delegate to the flight service
+            FlightService flightService =
+                    ((ItineraryServiceImpl)itineraryService).getFlightService();
+
+            flightService.saveFlightsToItinerary(outboundFlights, returnFlights, itineraryId);
+
+            // Return the updated itinerary
+            Itinerary updatedItinerary = itineraryService.getItineraryById(itineraryId);
+            return new ResponseEntity<>(updatedItinerary, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error adding flights to itinerary: " + e.getMessage(), e);
         }
     }
 
@@ -206,7 +286,7 @@ public class ItineraryController {
 
         // Add flight prices
         if (itinerary.getFlightsList() != null && !itinerary.getFlightsList().isEmpty()) {
-            for (org.buildATrip.entity.Flight flight : itinerary.getFlightsList()) {
+            for (Flight flight : itinerary.getFlightsList()) {
                 if (flight.getPrice() != null) {
                     totalPrice = totalPrice.add(flight.getPrice());
                 }
@@ -215,7 +295,7 @@ public class ItineraryController {
 
         // Add hotel prices
         if (itinerary.getHotelsList() != null && !itinerary.getHotelsList().isEmpty()) {
-            for (org.buildATrip.entity.Hotel hotel : itinerary.getHotelsList()) {
+            for (Hotel hotel : itinerary.getHotelsList()) {
                 if (hotel.getPrice() != null) {
                     // Multiply by number of nights (endDate - startDate)
                     long nights = itinerary.getStartDate().until(itinerary.getEndDate()).getDays();
@@ -227,7 +307,7 @@ public class ItineraryController {
 
         // Add activity prices
         if (itinerary.getActivitiesList() != null && !itinerary.getActivitiesList().isEmpty()) {
-            for (org.buildATrip.entity.Activity activity : itinerary.getActivitiesList()) {
+            for (Activity activity : itinerary.getActivitiesList()) {
                 if (activity.getPrice() != null) {
                     // Multiply by number of adults
                     BigDecimal activityTotal = activity.getPrice().multiply(BigDecimal.valueOf(itinerary.getNumAdults()));
@@ -243,8 +323,7 @@ public class ItineraryController {
     @DeleteMapping("/{itineraryId}/flight/{flightId}")
     public ResponseEntity<Void> removeFlightFromItinerary(@PathVariable int itineraryId, @PathVariable int flightId) {
         try {
-            // This method would need to be implemented in the service
-            // itineraryService.removeFlightFromItinerary(itineraryId, flightId);
+            ((ItineraryServiceImpl) itineraryService).removeFlightFromItinerary(itineraryId, flightId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -258,8 +337,7 @@ public class ItineraryController {
     @DeleteMapping("/{itineraryId}/hotel/{hotelId}")
     public ResponseEntity<Void> removeHotelFromItinerary(@PathVariable int itineraryId, @PathVariable String hotelId) {
         try {
-            // This method would need to be implemented in the service
-            // itineraryService.removeHotelFromItinerary(itineraryId, hotelId);
+            ((ItineraryServiceImpl) itineraryService).removeHotelFromItinerary(itineraryId, hotelId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -273,8 +351,7 @@ public class ItineraryController {
     @DeleteMapping("/{itineraryId}/activity/{activityId}")
     public ResponseEntity<Void> removeActivityFromItinerary(@PathVariable int itineraryId, @PathVariable int activityId) {
         try {
-            // This method would need to be implemented in the service
-            // itineraryService.removeActivityFromItinerary(itineraryId, activityId);
+            ((ItineraryServiceImpl) itineraryService).removeActivityFromItinerary(itineraryId, activityId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

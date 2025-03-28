@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`flight` (
     `next_flight_id` INT NULL,
     `origin_code` CHAR(3) NOT NULL,
     `dest_code` CHAR(3) NOT NULL,
+    `flight_type` VARCHAR(20) NOT NULL,
     PRIMARY KEY (`flight_id`),
     INDEX `fk_flight_flight_idx` (`next_flight_id` ASC) VISIBLE,
     INDEX `fk_flight_locationcode1_idx` (`origin_code` ASC) VISIBLE,
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`flight` (
 -- Table `travel-itinerary-test`.`hotel`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`hotel` (
-    `hotel_id` CHAR(8) NOT NULL,
+    `hotel_id` INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(45) NOT NULL,
     `price` DECIMAL(7,2) NOT NULL,
     `checkin_date` DATE NOT NULL,
@@ -103,19 +104,6 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`activity` (
     `longitude` DECIMAL(9,6) NOT NULL,
     `description` MEDIUMTEXT NULL,
     PRIMARY KEY (`activity_id`))
-    ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `travel-itinerary-test`.`pointOfInterest`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`pointOfInterest` (
-    `poi_id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(45) NOT NULL,
-    `latitude` DECIMAL(9,6) NOT NULL,
-    `longitude` DECIMAL(9,6) NOT NULL,
-    `category` VARCHAR(20) NOT NULL,
-    PRIMARY KEY (`poi_id`))
     ENGINE = InnoDB;
 
 
@@ -169,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`itinerary_flight` (
 -- Table `travel-itinerary-test`.`hotel_itinerary`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`hotel_itinerary` (
-    `hotel_id` CHAR(8) NOT NULL,
+    `hotel_id` INT NOT NULL,
     `itinerary_id` INT NOT NULL,
     PRIMARY KEY (`hotel_id`, `itinerary_id`),
     INDEX `fk_hotel_has_itinerary_itinerary1_idx` (`itinerary_id` ASC) VISIBLE,
@@ -204,28 +192,6 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`activity_itinerary` (
     CONSTRAINT `fk_activity_has_itinerary_itinerary1`
     FOREIGN KEY (`itinerary_id`)
     REFERENCES `travel-itinerary-test`.`itinerary` (`itinerary_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-    ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `travel-itinerary-test`.`itinerary_pointOfInterest`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`itinerary_pointOfInterest` (
-    `itinerary_id` INT NOT NULL,
-    `poi_id` INT NOT NULL,
-    PRIMARY KEY (`itinerary_id`, `poi_id`),
-    INDEX `fk_itinerary_has_pointOfInterest_pointOfInterest1_idx` (`poi_id` ASC) VISIBLE,
-    INDEX `fk_itinerary_has_pointOfInterest_itinerary1_idx` (`itinerary_id` ASC) VISIBLE,
-    CONSTRAINT `fk_itinerary_has_pointOfInterest_itinerary1`
-    FOREIGN KEY (`itinerary_id`)
-    REFERENCES `travel-itinerary-test`.`itinerary` (`itinerary_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-    CONSTRAINT `fk_itinerary_has_pointOfInterest_pointOfInterest1`
-    FOREIGN KEY (`poi_id`)
-    REFERENCES `travel-itinerary-test`.`pointOfInterest` (`poi_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
     ENGINE = InnoDB;

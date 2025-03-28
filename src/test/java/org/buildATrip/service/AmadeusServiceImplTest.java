@@ -40,8 +40,8 @@ class AmadeusServiceImplTest {
     @Test
     void getLocation() {
         try {
-            LocationCode actual = amadeusService.getAirportLocations("LHR");
-            assertEquals("London".toUpperCase(), actual.getCityName());
+            LocationCode actual = amadeusService.getCityLocations("London");
+            assertEquals("London", actual.getCityName());
 
             assertNotNull(locationCodeRepository.findById("LHR"));
 
@@ -54,8 +54,9 @@ class AmadeusServiceImplTest {
     @Test
     void getFlights() {
         try {
-
-            List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
+            LocationCode origin = amadeusService.getCityLocations("New York");
+            LocationCode destination = amadeusService.getCityLocations("Paris");
+            List<List<Flight>> flights = amadeusService.getFlights(origin.getCodeId(), destination.getCodeId(), LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
             assertNotNull(flights);
             assertEquals(3, flights.size());
 
@@ -67,7 +68,8 @@ class AmadeusServiceImplTest {
     @Test
     void getFlightsByDestination() {
         try {
-            List<List<Flight>> flights = amadeusService.getFlightsByDestination("NYC", LocalDate.parse("2025-04-07"), 14, 2, 2000, false);
+            LocationCode origin = amadeusService.getCityLocations("New York");
+            List<List<Flight>> flights = amadeusService.getFlightsByDestination(origin.getCodeId(), LocalDate.parse("2025-04-07"), 14, 2, 2000, false);
             assertNotNull(flights);
             assertEquals(3, flights.size());
         } catch (Exception e) {

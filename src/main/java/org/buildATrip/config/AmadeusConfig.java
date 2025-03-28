@@ -1,4 +1,4 @@
-package org.buildATrip.entity;
+package org.buildATrip.config;
 
 import com.amadeus.Amadeus;
 import org.springframework.beans.factory.annotation.Value;

@@ -75,7 +75,6 @@ public class AmadeusServiceImpl implements AmadeusService {
                 Params.with("originLocationCode", originaLocationCode)
                         .and("destinationLocationCode", destinationLocationCode)
                         .and("departureDate", departureDate)
-                        // .and("returnDate", returnDate)
                         .and("adults", numberAdults)
                         .and("children", 0)
                         .and("infants", 0)
@@ -124,7 +123,6 @@ public class AmadeusServiceImpl implements AmadeusService {
         FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(
                 Params.with("origin", originLocationCode)
                         .and("departureDate", departureDate)
-                        //.and("duration", duration)
                         .and("oneWay", true)
                         .and("nonStop", isNonStop)
                         .and("maxPrice", maxPrice)
@@ -185,28 +183,13 @@ public class AmadeusServiceImpl implements AmadeusService {
             throw new RuntimeException(e);
         }
 
-
-//        HotelOffer[] offers = amadeus.shopping.hotelOffers.get(
-//                Params.with("hotelIds", hotelIds)
-//                        .and("adult", numberAdults)
-//                        .and("checkInDate", checkinDate)
-//                        .and("checkOutDate", checkoutDate)
-//                        .and("countryOfResidence", "CAN")
-//                        .and("roomQuantity", 1)
-//                        .and("price", priceRange)  //200-300 string!
-//                        //.and("currency", "CAD")
-//                        //.and("boardType", boardType)
-//
-//        );
         Response response2 = amadeus.get("/v3/shopping/hotel-offers",
                 Params.with("hotelIds", hotelIds)
                         .and("adult", numberAdults)
                         .and("checkInDate", checkinDate)
                         .and("checkOutDate", checkoutDate)
-                        //.and("countryOfResidence", "CAN")
                         .and("roomQuantity", 1)
-                        .and("price", priceRange)  //200-300 string!
-                        //.and("currency", "CAD")
+                        .and("price", priceRange)
                         .and("boardType", boardType)
         );
         ObjectMapper objectMapper2 = new ObjectMapper();
@@ -217,7 +200,7 @@ public class AmadeusServiceImpl implements AmadeusService {
             //handle Amadeus or no result
             int maxIteration = (rootNode.get("data").size()<5) ? rootNode.get("data").size() : 5;
             for (int i=0; i<maxIteration; i++) {
-                if (rootNode.get("data").get(i).get("available").asText().equals("true")){
+                if (rootNode.get("data").get(i).get("available").asText().equals("true") && (Double.parseDouble(priceRange) > Double.parseDouble(rootNode.get("data").get(i).get("offers").get(0).get("price").get("total").asText()) )){
                     Hotel hotel = new Hotel();
 
                     hotel.setName(rootNode.get("data").get(i).get("hotel").get("name").asText());

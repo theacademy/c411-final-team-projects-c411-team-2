@@ -47,7 +47,7 @@ public class Itinerary {
     )
     private List<Hotel> hotelsList;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "activity_itinerary",
             joinColumns = {@JoinColumn(name = "itinerary_id")},
@@ -66,6 +66,9 @@ public class Itinerary {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public Itinerary() {
+    }
 
     public Integer getId() {
         return id;

@@ -55,7 +55,7 @@ class AmadeusServiceImplTest {
     void getFlights() {
         try {
 
-            List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
+            List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 1000, false);
             assertNotNull(flights);
             assertEquals(3, flights.size());
 
@@ -93,6 +93,17 @@ class AmadeusServiceImplTest {
         try {
             List<Hotel> hotels = amadeusService.getHotelsByCity("PAR", 1, LocalDate.parse("2025-04-15"), LocalDate.parse("2025-04-18"), "3000", BoardType.ROOM_ONLY);
             assertNotNull(hotels);
+        } catch (Exception e) {
+            fail("Should not have thrown an exception", e);
+        }
+    }
+
+    @Test
+    void getHotelsByCity0result() {
+        try {
+            List<Hotel> hotels = amadeusService.getHotelsByCity("PAR", 1, LocalDate.parse("2025-04-15"), LocalDate.parse("2025-04-18"), "1", BoardType.ROOM_ONLY);
+            assertNotNull(hotels);
+            assertTrue(hotels.size()==0);
         } catch (Exception e) {
             fail("Should not have thrown an exception", e);
         }

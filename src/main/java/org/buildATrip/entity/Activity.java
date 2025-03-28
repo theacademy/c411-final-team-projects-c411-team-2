@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 
 @Entity
@@ -104,5 +105,17 @@ public class Activity {
 
     public void setItineraryList(List<Itinerary> itineraryList) {
         this.itineraryList = itineraryList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Activity activity = (Activity) o;
+        return id == activity.id && Double.compare(rating, activity.rating) == 0 && Objects.equals(name, activity.name) && Objects.equals(description, activity.description) && Objects.equals(price, activity.price) && Objects.equals(latitude, activity.latitude) && Objects.equals(longitude, activity.longitude);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, rating, price, latitude, longitude);
     }
 }

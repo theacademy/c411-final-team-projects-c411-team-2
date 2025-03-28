@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`flight` (
   `next_flight_id` INT NULL,
   `origin_code` CHAR(3) NOT NULL,
   `dest_code` CHAR(3) NOT NULL,
+  `flight_type` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`flight_id`),
   INDEX `fk_flight_flight_idx` (`next_flight_id` ASC) VISIBLE,
   INDEX `fk_flight_locationcode1_idx` (`origin_code` ASC) VISIBLE,

@@ -5,35 +5,34 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema travel-itinerary
+-- Schema travel-itinerary-test
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema travel-itinerary
+-- Schema travel-itinerary-test
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `travel-itinerary-test` DEFAULT CHARACTER SET utf8 ;
 USE `travel-itinerary-test` ;
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`user`
+-- Table `travel-itinerary-test`.`user`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`user` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `first_name` VARCHAR(45) NOT NULL,
   `last_name` VARCHAR(45) NOT NULL,
-  `email` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(100) UNIQUE NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   `origin_city` VARCHAR(50) NULL,
   `dob` DATE NULL,
-    PRIMARY KEY (`id`)),
-    UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
+    PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`locationcode`
+-- Table `travel-itinerary-test`.`locationcode`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`locationcode` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`locationcode` (
   `code_id` CHAR(3) NOT NULL,
   `city_name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`code_id`))
@@ -41,9 +40,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`flight`
+-- Table `travel-itinerary-test`.`flight`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`flight` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`flight` (
   `flight_id` INT NOT NULL AUTO_INCREMENT,
   `price` DECIMAL(7,2) NOT NULL,
   `duration` TIME NOT NULL,
@@ -60,26 +59,26 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`flight` (
   INDEX `fk_flight_locationcode2_idx` (`dest_code` ASC) VISIBLE,
   CONSTRAINT `fk_flight_flight`
     FOREIGN KEY (`next_flight_id`)
-    REFERENCES `travel-itinerary`.`flight` (`flight_id`)
+    REFERENCES `travel-itinerary-test`.`flight` (`flight_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_flight_locationcode1`
     FOREIGN KEY (`origin_code`)
-    REFERENCES `travel-itinerary`.`locationcode` (`code_id`)
+    REFERENCES `travel-itinerary-test`.`locationcode` (`code_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_flight_locationcode2`
     FOREIGN KEY (`dest_code`)
-    REFERENCES `travel-itinerary`.`locationcode` (`code_id`)
+    REFERENCES `travel-itinerary-test`.`locationcode` (`code_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`hotel`
+-- Table `travel-itinerary-test`.`hotel`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`hotel` (
   `hotel_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `price` DECIMAL(7,2) NOT NULL,
@@ -94,9 +93,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`activity`
+-- Table `travel-itinerary-test`.`activity`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`activity` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`activity` (
   `activity_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `rating` DECIMAL(3,2) NOT NULL,
@@ -109,9 +108,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`itinerary`
+-- Table `travel-itinerary-test`.`itinerary`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`itinerary` (
   `itinerary_id` INT NOT NULL AUTO_INCREMENT,
   `num_adults` SMALLINT NOT NULL,
   `price_range_flight` DECIMAL(7,2) NULL,
@@ -126,16 +125,16 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary` (
   INDEX `fk_itinerary_user1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_itinerary_user1`
     FOREIGN KEY (`user_id`)
-    REFERENCES `travel-itinerary`.`user` (`id`)
+    REFERENCES `travel-itinerary-test`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`itinerary_flight`
+-- Table `travel-itinerary-test`.`itinerary_flight`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary_flight` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`itinerary_flight` (
   `itinerary_id` INT NOT NULL,
   `flight_id` INT NOT NULL,
   PRIMARY KEY (`itinerary_id`, `flight_id`),
@@ -143,21 +142,21 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`itinerary_flight` (
   INDEX `fk_itinerary_has_flight_itinerary1_idx` (`itinerary_id` ASC) VISIBLE,
   CONSTRAINT `fk_itinerary_has_flight_itinerary1`
     FOREIGN KEY (`itinerary_id`)
-    REFERENCES `travel-itinerary`.`itinerary` (`itinerary_id`)
+    REFERENCES `travel-itinerary-test`.`itinerary` (`itinerary_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_itinerary_has_flight_flight1`
     FOREIGN KEY (`flight_id`)
-    REFERENCES `travel-itinerary`.`flight` (`flight_id`)
+    REFERENCES `travel-itinerary-test`.`flight` (`flight_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`hotel_itinerary`
+-- Table `travel-itinerary-test`.`hotel_itinerary`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel_itinerary` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`hotel_itinerary` (
   `hotel_id` INT NOT NULL,
   `itinerary_id` INT NOT NULL,
   PRIMARY KEY (`hotel_id`, `itinerary_id`),
@@ -165,21 +164,21 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`hotel_itinerary` (
   INDEX `fk_hotel_has_itinerary_hotel1_idx` (`hotel_id` ASC) VISIBLE,
   CONSTRAINT `fk_hotel_has_itinerary_hotel1`
     FOREIGN KEY (`hotel_id`)
-    REFERENCES `travel-itinerary`.`hotel` (`hotel_id`)
+    REFERENCES `travel-itinerary-test`.`hotel` (`hotel_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_hotel_has_itinerary_itinerary1`
     FOREIGN KEY (`itinerary_id`)
-    REFERENCES `travel-itinerary`.`itinerary` (`itinerary_id`)
+    REFERENCES `travel-itinerary-test`.`itinerary` (`itinerary_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `travel-itinerary`.`activity_itinerary`
+-- Table `travel-itinerary-test`.`activity_itinerary`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `travel-itinerary`.`activity_itinerary` (
+CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`activity_itinerary` (
   `activity_id` INT NOT NULL,
   `itinerary_id` INT NOT NULL,
   PRIMARY KEY (`activity_id`, `itinerary_id`),
@@ -187,12 +186,12 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`activity_itinerary` (
   INDEX `fk_activity_has_itinerary_activity1_idx` (`activity_id` ASC) VISIBLE,
   CONSTRAINT `fk_activity_has_itinerary_activity1`
     FOREIGN KEY (`activity_id`)
-    REFERENCES `travel-itinerary`.`activity` (`activity_id`)
+    REFERENCES `travel-itinerary-test`.`activity` (`activity_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_activity_has_itinerary_itinerary1`
     FOREIGN KEY (`itinerary_id`)
-    REFERENCES `travel-itinerary`.`itinerary` (`itinerary_id`)
+    REFERENCES `travel-itinerary-test`.`itinerary` (`itinerary_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

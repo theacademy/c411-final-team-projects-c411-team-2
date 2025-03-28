@@ -56,6 +56,7 @@ public class FlightRepositoryTest {
         testFlight.setIsNonstop(true);
         testFlight.setOriginCode(originCode);
         testFlight.setDestinationCode(destCode);
+        testFlight.setFlightType("OUTBOUND");
 
         // Save the test flight for use in tests
         testFlight = flightRepository.save(testFlight);
@@ -73,6 +74,8 @@ public class FlightRepositoryTest {
         newFlight.setIsNonstop(false);
         newFlight.setOriginCode(originCode);
         newFlight.setDestinationCode(destCode);
+        newFlight.setFlightType("OUTBOUND");
+
 
         // When
         Flight savedFlight = flightRepository.save(newFlight);
@@ -156,6 +159,8 @@ public class FlightRepositoryTest {
         connectedFlight.setDepartureTime(LocalTime.of(17, 0));
         connectedFlight.setIsNonstop(true);
         connectedFlight.setOriginCode(destCode); // LAX
+        connectedFlight.setFlightType("OUTBOUND");
+
 
         // Create another location for the final destination
         LocationCode finalDest = new LocationCode("MIA", "Miami");

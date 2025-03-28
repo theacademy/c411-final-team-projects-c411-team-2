@@ -176,7 +176,7 @@ public class AmadeusServiceImpl implements AmadeusService {
 
     @Override
     public List<Hotel> getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType) throws ResponseException {
-
+        LocationCode locationCode = getCityLocations(cityCode);
         Response response = amadeus.get("/v1/reference-data/locations/hotels/by-city",
                 Params.with("cityCode", cityCode));
 

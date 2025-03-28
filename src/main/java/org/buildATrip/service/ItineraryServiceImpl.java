@@ -6,6 +6,7 @@ import org.buildATrip.entity.Flight;
 import org.buildATrip.entity.Hotel;
 import org.buildATrip.entity.Itinerary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -26,7 +27,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Autowired
     public ItineraryServiceImpl(ItineraryRepo itineraryRepo, HotelRepo hotelRepo,
                                 ActivityRepository activityRepo, FlightRepository flightRepo,
-                                UserRepository userRepo, FlightService flightService) {
+                                UserRepository userRepo, @Lazy FlightService flightService) {
         this.itineraryRepo = itineraryRepo;
         this.hotelRepo = hotelRepo;
         this.activityRepo = activityRepo;

@@ -1,9 +1,12 @@
 package org.buildATrip.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -38,6 +41,11 @@ public class Hotel {
     @Column(name = "board_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
+
+    @ManyToMany(mappedBy = "hotelsList", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Itinerary> itineraryList;
+
 
     public Hotel(){}
 
@@ -88,6 +96,10 @@ public class Hotel {
         return boardType;
     }
 
+    public List<Itinerary> getItineraryList() {
+        return itineraryList;
+    }
+
     public void setHotel_id(String hotel_id) {
         this.hotel_id = hotel_id;
     }
@@ -122,6 +134,10 @@ public class Hotel {
 
     public void setBoardType(BoardType boardType) {
         this.boardType = boardType;
+    }
+
+    public void setItineraryList(List<Itinerary> itineraryList) {
+        this.itineraryList = itineraryList;
     }
 
     @Override

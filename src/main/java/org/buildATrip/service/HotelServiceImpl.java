@@ -53,4 +53,14 @@ public class HotelServiceImpl implements HotelService {
     public void deleteHotel(String id) {
         hotelRepo.deleteById(id);
     }
+
+    @Override
+    public void deleteAllHotel() {
+        hotelRepo.deleteAll();
+    }
+
+    @Override
+    public Hotel findHotelWithItineraryList(String id) {
+        return hotelRepo.findHotelWithItineraryList(id);
+    }
 }

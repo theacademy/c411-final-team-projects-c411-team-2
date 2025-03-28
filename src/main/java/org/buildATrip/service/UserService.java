@@ -1,7 +1,10 @@
 package org.buildATrip.service;
 
 
+import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.User;
+
+import java.util.List;
 
 public interface UserService {
     User getUserById(int id);
@@ -11,5 +14,5 @@ public interface UserService {
     User updateUser(int id, User user);
     void deleteUser(int id);
     void deleteAllUser(); // used to clean up test db
-//    List<Itinerary> getItinerariesForUser(int userId);
+    List<Itinerary> getItinerariesForUser(int userId);
 }

@@ -1,11 +1,14 @@
 package org.buildATrip.controller;
 
+import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.User;
 import org.buildATrip.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -54,9 +57,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping("/{userId}/itineraries")
-//    public List<Itinerary> getItinerariesForUser(@PathVariable int userId) {
-//        return userService.getItinerariesForUser(userId);
-//    }
+    @GetMapping("/{userId}/itineraries")
+    public List<Itinerary> getItinerariesForUser(@PathVariable int userId) {
+        return userService.getItinerariesForUser(userId);
+    }
 
 }

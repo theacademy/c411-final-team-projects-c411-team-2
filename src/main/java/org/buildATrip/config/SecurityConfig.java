@@ -17,7 +17,9 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests() // Use authorizeRequests() instead of authorizeHttpRequests
-                .antMatchers("/user/*").permitAll()
+                .antMatchers("/*").permitAll()
+                .antMatchers("/static/*").permitAll()
+                .antMatchers("/user/**").permitAll()
                 .antMatchers("/activity/*").permitAll()
                 .antMatchers("/hotel/*").permitAll()
                 .antMatchers("/flight/**").permitAll()

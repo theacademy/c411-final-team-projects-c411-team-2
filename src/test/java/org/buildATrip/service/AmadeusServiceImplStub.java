@@ -10,6 +10,9 @@ import java.util.List;
 
 public class AmadeusServiceImplStub implements AmadeusService{
 
+    public static final String FLIGHT_TYPE_OUTBOUND = "OUTBOUND";
+    public static final String FLIGHT_TYPE_RETURN = "RETURN";
+
     @Override
     public LocationCode getAirportLocations(String keyword) throws ResponseException {
         if (keyword.equals("JFK")){
@@ -23,19 +26,19 @@ public class AmadeusServiceImplStub implements AmadeusService{
         if (originaLocationCode.equals("JFK")) {
             return List.of(
                     List.of(
-                            new Flight(null, new BigDecimal("200"), LocalTime.of(4, 0), LocalDate.parse("2025-05-05"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, new BigDecimal("200"), LocalTime.of(4, 0), LocalDate.parse("2025-05-05"),
                                     LocalTime.of(11, 0), true, null, new LocationCode("JFK", "NEW YORK"), new LocationCode("HEL", "HELENA"))
                     ),
                     List.of(
-                            new Flight(null, null, LocalTime.of(4, 0), LocalDate.parse("2025-05-05"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, null, LocalTime.of(4, 0), LocalDate.parse("2025-05-05"),
                                     LocalTime.of(11, 0), true, null, new LocationCode("JFK", "NEW YORK"), new LocationCode("HEL", "HELENA"))
                             ,
-                            new Flight(null, new BigDecimal("300"), LocalTime.of(5, 0), LocalDate.parse("2025-05-05"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, new BigDecimal("300"), LocalTime.of(5, 0), LocalDate.parse("2025-05-05"),
                                     LocalTime.of(22, 0), true, null, new LocationCode("HEL", "HELENA"), new LocationCode("PAR", "PARIS")
                             )
                     ),
                     List.of((
-                            new Flight(null, new BigDecimal("3300"), LocalTime.of(8, 0), LocalDate.parse("2025-05-07"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, new BigDecimal("3300"), LocalTime.of(8, 0), LocalDate.parse("2025-05-07"),
                                     LocalTime.of(1, 0), true, null, new LocationCode("JFK", "NEW YORK"), new LocationCode("LHR", "LONDON"))
                     ))
 
@@ -49,19 +52,19 @@ public class AmadeusServiceImplStub implements AmadeusService{
         if (originLocationCode.equals("JFK")){
             return List.of(
                     List.of(
-                            new Flight(null, new BigDecimal("200"), LocalTime.of(4,0), LocalDate.parse("2025-05-05"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, new BigDecimal("200"), LocalTime.of(4,0), LocalDate.parse("2025-05-05"),
                                     LocalTime.of(11, 0), true, null, new LocationCode("JFK", "NEW YORK"), new LocationCode("HEL", "HELENA"))
                     ),
                     List.of(
-                            new Flight(null, null, LocalTime.of(4,0), LocalDate.parse("2025-05-05"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, null, LocalTime.of(4,0), LocalDate.parse("2025-05-05"),
                                     LocalTime.of(11, 0), true, null, new LocationCode("JFK", "NEW YORK"), new LocationCode("HEL", "HELENA"))
                             ,
-                            new Flight(null, new BigDecimal("300"), LocalTime.of(5,0), LocalDate.parse("2025-05-05"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, new BigDecimal("300"), LocalTime.of(5,0), LocalDate.parse("2025-05-05"),
                                     LocalTime.of(22, 0), true, null, new LocationCode("HEL", "HELENA"), new LocationCode("PAR", "PARIS")
                             )
                     ),
                     List.of((
-                            new Flight(null, new BigDecimal("3300"), LocalTime.of(8,0), LocalDate.parse("2025-05-07"),
+                            new Flight(null, FLIGHT_TYPE_OUTBOUND, new BigDecimal("3300"), LocalTime.of(8,0), LocalDate.parse("2025-05-07"),
                                     LocalTime.of(1, 0), true, null, new LocationCode("JFK", "NEW YORK"), new LocationCode("LHR", "LONDON"))
                     ))
 
@@ -79,6 +82,4 @@ public class AmadeusServiceImplStub implements AmadeusService{
     public List<Activity> getActivitiesByCoordinates(float latitude, float longitude) {
         return null;
     }
-
-
 }

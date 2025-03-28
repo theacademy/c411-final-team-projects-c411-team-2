@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Century+Schoolbook&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background: url('background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    /*font-family: 'Arial', sans-serif;*/
+    font-family: 'Century Schoolbook', serif;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner {
+    position: absolute;
+    bottom: 10%;
+    left: 1%; /* Add space from the left edge */
+    right: 0%; /* Add space from the right edge */
+    background-color: rgba(60, 40, 20, 0.9);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    width: 96%; /* Make the banner span the width with some space */
+    height: 20%
+}
+
+.banner h1 {
+    margin: 0;
+    font-size: 58px;
+}
+
+.banner .sub-header {
+    display: flex;
+    justify-content: space-between; /* Space out the two items */
+    align-items: center; /* Vertically center the items */
+    margin-top: 20px; /* Add some space between the heading and the sub-header */
+}
+
+.banner p {
+    font-size: 35px; /* Equivalent to 24 in PowerPoint */
+    color: #b0f0a0;
+    margin: 0;
+    margin-top: 10px;
+}
+
+.team-name {
+    font-size: 35px; /* Equivalent to 24 in PowerPoint */
+    text-align: right;
+    color: #b0f0a0;
+    margin-top: 10px;
+    margin-right: 80px;
+}
+
+.bob-image {
+    position: absolute;  /* Keep it absolutely positioned within the banner */
+    bottom: 20%;         /* Adjust this to control the vertical positioning */
+    right: 5%;           /* Keep it aligned to the right edge */
+    width: 200px;
+}

@@ -6,9 +6,14 @@ import org.buildATrip.entity.LocationCode;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface FlightService {
+
+    String FLIGHT_TYPE_OUTBOUND = "OUTBOUND";
+    String FLIGHT_TYPE_RETURN = "RETURN";
+
 
     /**
      * Get all flights from the database
@@ -141,4 +146,8 @@ public interface FlightService {
      * Delete all itinenary (mainly used for test clean up)
      */
     void deleteAllFlight();
+
+    // Add to FlightService interface
+    List<Flight> getFlightsByItineraryId(Integer itineraryId);
+    Map<String, List<Flight>> getOutboundAndReturnFlightsByItineraryId(Integer itineraryId);
 }

@@ -119,6 +119,7 @@ class ItineraryServiceImplTest {
         testFlight.setIsNonstop(true);
         testFlight.setOriginCode(originCode);
         testFlight.setDestinationCode(destCode);
+        testFlight.setFlightType("flightType");
 
         Flight flightWithId = flightService.saveFlight(testFlight);
 

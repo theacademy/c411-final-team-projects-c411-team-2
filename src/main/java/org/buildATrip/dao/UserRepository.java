@@ -15,5 +15,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT u.itineraryList FROM User u WHERE u.id = ?1")
     List<Itinerary> findItinerariesByUserId(int userId);
-
 }

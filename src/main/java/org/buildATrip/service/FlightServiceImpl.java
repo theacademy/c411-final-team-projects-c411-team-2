@@ -4,15 +4,15 @@ import com.amadeus.exceptions.ResponseException;
 import org.buildATrip.dao.FlightRepository;
 import org.buildATrip.dao.LocationCodeRepository;
 import org.buildATrip.entity.Flight;
+import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.LocationCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FlightServiceImpl implements FlightService {
@@ -20,14 +20,17 @@ public class FlightServiceImpl implements FlightService {
     private final FlightRepository flightRepository;
     private final LocationCodeRepository locationCodeRepository;
     private final AmadeusService amadeusService;
+    private final ItineraryService itineraryService;
+
 
     @Autowired
     public FlightServiceImpl(FlightRepository flightRepository,
                              LocationCodeRepository locationCodeRepo,
-                             AmadeusService amadeusService) {
+                             AmadeusService amadeusService, ItineraryService itineraryService) {
         this.flightRepository = flightRepository;
         this.locationCodeRepository = locationCodeRepo;
         this.amadeusService = amadeusService;
+        this.itineraryService = itineraryService;
     }
 
     @Override
@@ -153,13 +156,18 @@ public class FlightServiceImpl implements FlightService {
     @Override
     @Transactional
     public List<Flight> selectAndSaveOutboundFlights(List<Flight> selectedFlights, Integer itineraryId) {
+        // Set flight type for all flights
+        for (Flight flight : selectedFlights) {
+            flight.setFlightType(FLIGHT_TYPE_OUTBOUND);
+        }
+
         // Save the flights with connections established
         List<Flight> savedFlights = saveConnectingFlights(selectedFlights);
 
-        // In full implementation, I will link these flights to the itinerary here
-        // itineraryService.addOutboundFlightsToItinerary(itineraryId, savedFlights);
-        // or
-        // itineraryService.addFlightsToItinerary(itineraryId, savedFlights, "OUTBOUND");
+        // Link each flight to the itinerary
+        for (Flight flight : savedFlights) {
+            itineraryService.addFlightToItinerary(itineraryId, flight.getFlightId());
+        }
 
         return savedFlights;
     }
@@ -167,13 +175,18 @@ public class FlightServiceImpl implements FlightService {
     @Override
     @Transactional
     public List<Flight> selectAndSaveReturnFlights(List<Flight> selectedFlights, Integer itineraryId) {
+        // Set flight type for all flights
+        for (Flight flight : selectedFlights) {
+            flight.setFlightType(FLIGHT_TYPE_RETURN);
+        }
+
         // Save the flights with connections established
         List<Flight> savedFlights = saveConnectingFlights(selectedFlights);
 
-        // In full implementation, I will link these flights to the itinerary here
-        // itineraryService.addReturnFlightsToItinerary(itineraryId, savedFlights);
-        // or
-        // itineraryService.addFlightsToItinerary(itineraryId, savedFlights, "RETURN");
+        // Link each flight to the itinerary
+        for (Flight flight : savedFlights) {
+            itineraryService.addFlightToItinerary(itineraryId, flight.getFlightId());
+        }
 
         return savedFlights;
     }
@@ -184,18 +197,34 @@ public class FlightServiceImpl implements FlightService {
         List<Flight> allSavedFlights = new ArrayList<>();
 
         // Save outbound flights
-        List<Flight> savedOutboundFlights = saveConnectingFlights(outboundFlights);
-        allSavedFlights.addAll(savedOutboundFlights);
+        if (outboundFlights != null && !outboundFlights.isEmpty()) {
+            // Set flight type
+            for (Flight flight : outboundFlights) {
+                flight.setFlightType(FLIGHT_TYPE_OUTBOUND);
+            }
+
+            List<Flight> savedOutboundFlights = saveConnectingFlights(outboundFlights);
+            // Link to itinerary
+            for (Flight flight : savedOutboundFlights) {
+                itineraryService.addFlightToItinerary(itineraryId, flight.getFlightId());
+            }
+            allSavedFlights.addAll(savedOutboundFlights);
+        }
 
         // Save return flights
         if (returnFlights != null && !returnFlights.isEmpty()) {
+            // Set flight type
+            for (Flight flight : returnFlights) {
+                flight.setFlightType(FLIGHT_TYPE_RETURN);
+            }
+
             List<Flight> savedReturnFlights = saveConnectingFlights(returnFlights);
+            // Link to itinerary
+            for (Flight flight : savedReturnFlights) {
+                itineraryService.addFlightToItinerary(itineraryId, flight.getFlightId());
+            }
             allSavedFlights.addAll(savedReturnFlights);
         }
-
-        // In full implementation, I will link these flights to the itinerary here
-        // itineraryService.addFlightsToItinerary(itineraryId, savedOutboundFlights, "OUTBOUND");
-        // itineraryService.addFlightsToItinerary(itineraryId, savedReturnFlights, "RETURN");
 
         return allSavedFlights;
     }
@@ -204,4 +233,36 @@ public class FlightServiceImpl implements FlightService {
     public void deleteAllFlight() {
         flightRepository.deleteAll();
     }
+
+    @Override
+    public List<Flight> getFlightsByItineraryId(Integer itineraryId) {
+        // Get the itinerary with its associated flights
+        Itinerary itinerary = itineraryService.getItineraryById(itineraryId);
+        if (itinerary != null && itinerary.getFlightsList() != null) {
+            return itinerary.getFlightsList();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Map<String, List<Flight>> getOutboundAndReturnFlightsByItineraryId(Integer itineraryId) {
+        Map<String, List<Flight>> result = new HashMap<>();
+        List<Flight> allFlights = getFlightsByItineraryId(itineraryId);
+
+        List<Flight> outboundFlights = allFlights.stream()
+                .filter(f -> FLIGHT_TYPE_OUTBOUND.equals(f.getFlightType()))
+                .collect(Collectors.toList());
+
+        List<Flight> returnFlights = allFlights.stream()
+                .filter(f -> FLIGHT_TYPE_RETURN.equals(f.getFlightType()))
+                .collect(Collectors.toList());
+
+        result.put("outbound", outboundFlights);
+        result.put("return", returnFlights);
+
+        return result;
+    }
+
+
+
 }

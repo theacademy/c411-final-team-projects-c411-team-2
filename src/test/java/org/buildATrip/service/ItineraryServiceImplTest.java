@@ -54,7 +54,6 @@ class ItineraryServiceImplTest {
     void addHotelToItinenary() {
 
         Hotel hotel1 = new Hotel();
-        hotel1.setHotel_id("YOOOYOOO");
         hotel1.setName("HotelName");
         hotel1.setPrice(new BigDecimal("150.00"));
         hotel1.setCheckinDate(LocalDate.parse("2025-06-10"));
@@ -64,7 +63,7 @@ class ItineraryServiceImplTest {
         hotel1.setLongitude(new BigDecimal("7.21"));
         hotel1.setBoardType(BoardType.BREAKFAST);
 
-        hotelService.createHotel(hotel1);
+        Hotel savedHotel = hotelService.createHotel(hotel1);
 
 
         User user1 = new User();
@@ -94,8 +93,8 @@ class ItineraryServiceImplTest {
         Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
 
 
-        Itinerary updatedItinerary = itineraryService.addHotelToItinerary(insertItinerary.getId(), hotel1.getHotel_id());
-        Hotel updatedHotel = hotelService.findHotelWithItineraryList(hotel1.getHotel_id()); //hotelService.getHotelById(hotel1.getHotel_id());
+        Itinerary updatedItinerary = itineraryService.addHotelToItinerary(insertItinerary.getId(), savedHotel.getHotel_id());
+        Hotel updatedHotel = hotelService.findHotelWithItineraryList(savedHotel.getHotel_id());
 
         assertEquals(1, updatedItinerary.getHotelsList().size(), "Should contains only 1 hotel");
         assertEquals(1, updatedHotel.getItineraryList().size(), "Should contains 1 itinenary");

@@ -16,7 +16,7 @@ public interface ItineraryService {
 
     Itinerary addFlightToItinerary(int itineraryId, int flightId);
 
-    Itinerary addHotelToItinerary(int itineraryId, String hotelId);
+    Itinerary addHotelToItinerary(int itineraryId, Integer hotelId);
 
     Itinerary addActivityToItinerary(int itineraryId, int activityId);
 

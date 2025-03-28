@@ -111,7 +111,7 @@ public class ItineraryController {
 
     // Add a hotel to an itinerary
     @PostMapping("/{itineraryId}/hotel/{hotelId}")
-    public ResponseEntity<Itinerary> addHotelToItinerary(@PathVariable int itineraryId, @PathVariable String hotelId) {
+    public ResponseEntity<Itinerary> addHotelToItinerary(@PathVariable int itineraryId, @PathVariable int hotelId) {
         try {
             Itinerary updatedItinerary = itineraryService.addHotelToItinerary(itineraryId, hotelId);
             return new ResponseEntity<>(updatedItinerary, HttpStatus.OK);

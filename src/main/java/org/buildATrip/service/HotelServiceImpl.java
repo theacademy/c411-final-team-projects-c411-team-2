@@ -39,18 +39,18 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Hotel getHotelById(String id) {
+    public Hotel getHotelById(Integer id) {
         return hotelRepo.findById(id).orElse(null);
     }
 
     @Override
-    public void createHotel(Hotel hotel) {
-        hotelRepo.save(hotel);
+    public Hotel createHotel(Hotel hotel) {
+        return hotelRepo.save(hotel);
     }
 
 
     @Override
-    public void deleteHotel(String id) {
+    public void deleteHotel(Integer id) {
         hotelRepo.deleteById(id);
     }
 
@@ -60,7 +60,7 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Hotel findHotelWithItineraryList(String id) {
+    public Hotel findHotelWithItineraryList(Integer id) {
         return hotelRepo.findHotelWithItineraryList(id);
     }
 }

@@ -215,4 +215,31 @@ public class FlightController {
                     "Error retrieving trip flights for itinerary: " + e.getMessage(), e);
         }
     }
+
+    // Update a flight
+    @PutMapping("/{id}")
+    public ResponseEntity<Flight> updateFlight(
+            @PathVariable Integer id,
+            @RequestBody Flight flight) {
+
+        try {
+            // Ensure the ID in the path matches the flight object
+            if (!id.equals(flight.getFlightId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Flight ID in path does not match flight object");
+            }
+
+            // Verify the flight exists
+            if (!flightService.getFlightById(id).isPresent()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            // Save the updated flight
+            Flight updatedFlight = flightService.saveFlight(flight);
+            return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error updating flight: " + e.getMessage(), e);
+        }
+    }
 }

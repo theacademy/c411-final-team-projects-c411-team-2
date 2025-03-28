@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS `travel-itinerary`.`user` (
   `password` VARCHAR(255) NOT NULL,
   `origin_city` VARCHAR(50) NULL,
   `dob` DATE NULL,
-  PRIMARY KEY (`id`))
+    PRIMARY KEY (`id`)),
+    UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 

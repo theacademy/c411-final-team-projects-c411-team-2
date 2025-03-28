@@ -7,6 +7,7 @@ import org.buildATrip.entity.Flight;
 import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.LocationCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     public FlightServiceImpl(FlightRepository flightRepository,
                              LocationCodeRepository locationCodeRepo,
-                             AmadeusService amadeusService, ItineraryService itineraryService) {
+                             AmadeusService amadeusService, @Lazy ItineraryService itineraryService) {
         this.flightRepository = flightRepository;
         this.locationCodeRepository = locationCodeRepo;
         this.amadeusService = amadeusService;

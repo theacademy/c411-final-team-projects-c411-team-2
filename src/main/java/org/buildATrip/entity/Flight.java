@@ -17,6 +17,10 @@ public class Flight {
     @Column(name = "flight_id")
     private Integer flightId;
 
+    // Add to Flight entity
+    @Column(name = "flight_type")
+    private String flightType;
+
     @Column(name = "price", precision = 7, scale = 2, nullable = false)
     private BigDecimal price;
 
@@ -52,10 +56,11 @@ public class Flight {
     }
 
     // Constructor with all fields
-    public Flight(Integer flightId, BigDecimal price, LocalTime duration, LocalDate date,
+    public Flight(Integer flightId, String flightType, BigDecimal price, LocalTime duration, LocalDate date,
                   LocalTime departureTime, Boolean isNonstop, Integer nextFlightId,
                   LocationCode originCode, LocationCode destinationCode) {
         this.flightId = flightId;
+        this.flightType = flightType;
         this.price = price;
         this.duration = duration;
         this.date = date;
@@ -145,6 +150,15 @@ public class Flight {
 
     public void setItineraryList(List<Itinerary> itineraryList) {
         this.itineraryList = itineraryList;
+    }
+
+    // Getter and setter
+    public String getFlightType() {
+        return flightType;
+    }
+
+    public void setFlightType(String flightType) {
+        this.flightType = flightType;
     }
 
     // Helper method to calculate arrival time

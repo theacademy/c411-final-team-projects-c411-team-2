@@ -1,11 +1,13 @@
 package org.buildATrip.service;
 
+import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class UserServiceStubImpl implements UserService{
     private final User user1;
@@ -92,5 +94,15 @@ public class UserServiceStubImpl implements UserService{
     @Override
     public void deleteUser(int id) {
         //nothing to do
+    }
+
+    @Override
+    public void deleteAllUser() {
+        //nothing to do
+    }
+
+    @Override
+    public List<Itinerary> getItinerariesForUser(int userId) {
+        return List.of();
     }
 }

@@ -1,9 +1,6 @@
 package org.buildATrip.service;
 
-import org.buildATrip.dao.ActivityRepository;
-import org.buildATrip.dao.FlightRepository;
-import org.buildATrip.dao.HotelRepo;
-import org.buildATrip.dao.ItineraryRepo;
+import org.buildATrip.dao.*;
 import org.buildATrip.entity.Activity;
 import org.buildATrip.entity.Flight;
 import org.buildATrip.entity.Hotel;
@@ -25,14 +22,17 @@ public class ItineraryServiceImpl implements ItineraryService {
     private HotelRepo hotelRepo;
     private ActivityRepository activityRepo;
     private FlightRepository flightRepo;
+    private UserRepository userRepo;
 
     @Autowired
-    public ItineraryServiceImpl(ItineraryRepo itineraryRepo, HotelRepo hotelRepo, ActivityRepository activityRepo, FlightRepository flightRepo) {
+    public ItineraryServiceImpl(ItineraryRepo itineraryRepo, HotelRepo hotelRepo, ActivityRepository activityRepo, FlightRepository flightRepo, UserRepository userRepo) {
         this.itineraryRepo = itineraryRepo;
         this.hotelRepo = hotelRepo;
         this.activityRepo = activityRepo;
         this.flightRepo = flightRepo;
+        this.userRepo = userRepo;
     }
+
 
     @Override
     public Itinerary getItineraryById(int id) {
@@ -132,7 +132,7 @@ public class ItineraryServiceImpl implements ItineraryService {
 
     @Override
     public List<Itinerary> getItinerariesByUser(int userId) {
-        return List.of();
+        return userRepo.findItinerariesByUserId(userId);
     }
 
     @Override

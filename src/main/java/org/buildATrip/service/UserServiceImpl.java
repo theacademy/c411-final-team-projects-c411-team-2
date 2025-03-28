@@ -1,11 +1,13 @@
 package org.buildATrip.service;
 
 import org.buildATrip.dao.UserRepository;
+import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,7 +17,6 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-//    private ItineraryService itineraryService;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -99,8 +100,8 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteAll();
     }
 
-//    @Override
-//    public List<Itinerary> getItinerariesForUser(int userId) {
-//        return itineraryService.getItinerariesByUserId(userId);
-//    }
+    @Override
+    public List<Itinerary> getItinerariesForUser(int userId) {
+        return userRepository.findItinerariesByUserId(userId);
+    }
 }

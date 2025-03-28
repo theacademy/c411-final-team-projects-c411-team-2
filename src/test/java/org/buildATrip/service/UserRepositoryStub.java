@@ -1,6 +1,7 @@
 package org.buildATrip.service;
 
 import org.buildATrip.dao.UserRepository;
+import org.buildATrip.entity.Itinerary;
 import org.buildATrip.entity.User;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,11 @@ public class UserRepositoryStub implements UserRepository {
     @Override
     public Optional<User> findByEmail(String email) {
         return database.values().stream().filter(u -> u.getEmail().equals(email)).findFirst();
+    }
+
+    @Override
+    public List<Itinerary> findItinerariesByUserId(int userId) {
+        return List.of();
     }
 
     @Override

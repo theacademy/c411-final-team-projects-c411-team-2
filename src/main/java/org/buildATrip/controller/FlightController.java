@@ -191,4 +191,28 @@ public class FlightController {
                     "Error searching location: " + e.getMessage(), e);
         }
     }
+
+    // Get all flights for an itinerary
+    @GetMapping("/itinerary/{itineraryId}")
+    public ResponseEntity<List<Flight>> getFlightsByItineraryId(@PathVariable Integer itineraryId) {
+        try {
+            List<Flight> flights = flightService.getFlightsByItineraryId(itineraryId);
+            return new ResponseEntity<>(flights, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error retrieving flights for itinerary: " + e.getMessage(), e);
+        }
+    }
+
+    // Get outbound and return flights for an itinerary
+    @GetMapping("/itinerary/{itineraryId}/trips")
+    public ResponseEntity<Map<String, List<Flight>>> getOutboundAndReturnFlights(@PathVariable Integer itineraryId) {
+        try {
+            Map<String, List<Flight>> flights = flightService.getOutboundAndReturnFlightsByItineraryId(itineraryId);
+            return new ResponseEntity<>(flights, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error retrieving trip flights for itinerary: " + e.getMessage(), e);
+        }
+    }
 }

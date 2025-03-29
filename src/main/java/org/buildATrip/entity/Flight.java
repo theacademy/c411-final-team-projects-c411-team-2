@@ -21,7 +21,7 @@ public class Flight {
     @Column(name = "flight_type")
     private String flightType;
 
-    @Column(name = "price", precision = 7, scale = 2, nullable = false)
+    @Column(name = "price", precision = 7, scale = 2)
     private BigDecimal price;
 
     @Column(name = "duration", nullable = false)

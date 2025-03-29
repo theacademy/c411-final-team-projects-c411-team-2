@@ -179,18 +179,18 @@ public class FlightController {
                     "Error deleting flight: " + e.getMessage(), e);
         }
     }
-
-    // Search for location code by keyword
-    @GetMapping("/location/search")  // Changed from "/locations/search"
-    public ResponseEntity<LocationCode> searchLocationCode(@RequestParam String keyword) {
-        try {
-            LocationCode locationCode = locationCodeService.findOrCreateLocationCode(keyword);
-            return new ResponseEntity<>(locationCode, HttpStatus.OK);
-        } catch (ResponseException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Error searching location: " + e.getMessage(), e);
-        }
-    }
+//
+//    // Search for location code by keyword
+//    @GetMapping("/location/search")  // Changed from "/locations/search"
+//    public ResponseEntity<LocationCode> searchLocationCode(@RequestParam String keyword) {
+//        try {
+//            LocationCode locationCode = locationCodeService.findOrCreateLocationCode(keyword);
+//            return new ResponseEntity<>(locationCode, HttpStatus.OK);
+//        } catch (ResponseException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+//                    "Error searching location: " + e.getMessage(), e);
+//        }
+//    }
 
     // Get all flights for an itinerary
     @GetMapping("/itinerary/{itineraryId}")

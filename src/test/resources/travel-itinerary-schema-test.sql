@@ -44,7 +44,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `travel-itinerary-test`.`flight` (
   `flight_id` INT NOT NULL AUTO_INCREMENT,
-  `price` DECIMAL(7,2) NOT NULL,
+  `price` DECIMAL(7,2),
   `duration` TIME NOT NULL,
   `date` DATE NOT NULL,
   `departure_time` TIME NOT NULL,

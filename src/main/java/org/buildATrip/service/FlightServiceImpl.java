@@ -94,11 +94,12 @@ public class FlightServiceImpl implements FlightService {
                                                     int maxPrice, boolean isNonStop) throws ResponseException {
         try {
             // First ensure we have the location codes in our database
-            ensureLocationCode(originLocationCode);
-            ensureLocationCode(destinationLocationCode);
+
+            String originCode = amadeusService.getCityLocations(originLocationCode);
+            String destinationCode = amadeusService.getCityLocations(destinationLocationCode);
 
             // Then call Amadeus to get one-way flights for the outbound journey
-            return amadeusService.getFlights(originLocationCode, destinationLocationCode,
+            return amadeusService.getFlights(originCode, destinationCode,
                     departureDate, null, numberAdults, maxPrice, isNonStop);
         } catch (ResponseException e) {
             // Log the error for debugging
@@ -114,35 +115,14 @@ public class FlightServiceImpl implements FlightService {
         }
     }
 
-    /**
-     * Helper method to ensure a location code exists in the database
-     * before using it in flight searches
-     */
-    private void ensureLocationCode(String code) throws ResponseException {
-        // Check if the code already exists in our database
-        if (!locationCodeRepository.existsById(code)) {
-            // If not, try to fetch it from Amadeus
-            try {
-                amadeusService.getCityLocations(code);
-            } catch (Exception e) {
-                // If there's an error but it looks like a valid airport code,
-                // create a placeholder entry
-                if (code.length() == 3 && code.matches("[A-Z]{3}")) {
-                    LocationCode placeholder = new LocationCode(code, code + " Airport");
-                    locationCodeRepository.save(placeholder);
-                } else {
-                    throw e;
-                }
-            }
-        }
-    }
-
     @Override
     public List<List<Flight>> searchReturnFlights(String originLocationCode, String destinationLocationCode,
                                                   LocalDate returnDate, int numberAdults,
                                                   int maxPrice, boolean isNonStop) throws ResponseException {
         // Call Amadeus to get one-way flights for the return journey (swap origin/destination)
-        return amadeusService.getFlights(destinationLocationCode, originLocationCode,
+        String originCode = amadeusService.getCityLocations(originLocationCode);
+        String destinationCode = amadeusService.getCityLocations(destinationLocationCode);
+        return amadeusService.getFlights(destinationCode, originCode,
                 returnDate, null, numberAdults, maxPrice, isNonStop);
     }
 
@@ -150,7 +130,8 @@ public class FlightServiceImpl implements FlightService {
     public List<List<Flight>> searchFlightDestinations(String originLocationCode,
                                                        LocalDate departureDate, int duration,
                                                        int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
-        return amadeusService.getFlightsByDestination(originLocationCode,
+        String originCode = amadeusService.getCityLocations(originLocationCode);
+        return amadeusService.getFlightsByDestination(originCode,
                 departureDate, duration, numberAdults, maxPrice, isNonStop);
     }
 

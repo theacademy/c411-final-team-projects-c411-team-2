@@ -46,6 +46,53 @@
         button:hover {
             background-color: #45a049;
         }
+
+        .view-button {
+            background-color: #2196F3; /* Blue background for the View Itinerary button */
+            margin-top: 10px; /* Spacing between buttons */
+            width: 30%; /* Button takes less width */
+            position: relative; /* Positioned relative to the container */
+            right: -30%; /* Align to the right */
+        }
+
+        .view-button:hover {
+            background-color: #0b7dda; /* Darker blue for hover effect */
+        }
+
+        .view-all-button {
+            background-color: #FF9800; /* Orange background for the View All Itineraries button */
+            margin-top: 10px; /* Spacing between buttons */
+            width: 30%; /* Button takes less width */
+            position: relative; /* Positioned relative to the container */
+            right: -30%; /* Align to the right */
+
+        }
+
+        .view-all-button:hover {
+            background-color: #e68900; /* Darker orange for hover effect */
+        }
+
+        .itinerary-list {
+            margin-top: 20px;
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            background-color: #f4f4f4;
+            box-sizing: border-box;
+            border-radius: 5px;
+        }
+
+        .itinerary-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .itinerary-list ul li {
+            background-color: #e0e0e0;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +106,13 @@
     <input type="date" id="departureDate">
     <input type="date" id="returnDate">
     <button onclick="createItinerary()">Create Itinerary</button>
+    <button class="view-button" onclick="viewItinerary()">View My Itinerary</button>
+    <button class="view-all-button" onclick="viewAllItineraries()">View All My Itineraries</button>
+
+    <div id="itineraryListContainer" class="itinerary-list" style="display: none;">
+        <h3>Your Itineraries:</h3>
+        <ul id="itineraryList"></ul>
+    </div>
 </div>
 
 <script>
@@ -87,15 +141,81 @@ function createItinerary() {
         })
         .then(response => response.json())  // Assuming the server responds with JSON
         .then(data => {
+
             console.log('Success:', data);
-            // Optionally, you can redirect or update the UI based on response
-             alert("Itinerary created successfully!");
+            alert("Itinerary created successfully!");
+
+             //store variables to local storage to be retrieved in other pages
+             localStorage.setItem('itineraryId', data.itineraryId);
+             localStorage.setItem('userId', data.userId);
+
+             //redirect to flight page
+           //  window.location.href = `http://localhost:8080/flight`;
         })
         .catch((error) => {
             console.error('Error:', error);
             alert("Error");
         });
     }
+
+    function viewItinerary() {
+            // Retrieve itinerary ID from localStorage
+            const itineraryId = localStorage.getItem('itineraryId');
+
+            if (itineraryId) {
+                // Make a GET request to view the itinerary using the stored ID
+                fetch(`http://localhost:8080/itinerary/${itineraryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Assuming you have a way to display the itinerary details
+                        console.log("Itinerary Data:", data);
+                        alert("Itinerary retrieved successfully.");
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("Failed to retrieve the itinerary.");
+                    });
+            } else {
+                alert("No itinerary found. Please create an itinerary first.");
+            }
+        }
+    function viewAllItineraries() {
+        // Get user ID from the input field
+        const userId = document.getElementById("userCreated").value;
+
+        // Make a GET request to view all itineraries for the current user
+        const url = `http://localhost:8080/user/${userId}/itineraries`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Response Data:", data); // Log the full response for inspection
+
+                if (data && data.length > 0) {
+                    const itineraryList = document.getElementById("itineraryList");
+                    itineraryList.innerHTML = ''; // Clear any previous itineraries
+
+                    data.forEach(itinerary => {
+                        // Check the structure of itinerary to ensure itineraryId exists
+                        console.log("Itinerary Item:", itinerary); // Log individual itinerary item
+
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `Itinerary ID: ${itinerary.id || "N/A"} - ${itinerary.startDate} to ${itinerary.endDate}`;
+                        itineraryList.appendChild(listItem);
+                    });
+
+                    // Show the list container
+                    document.getElementById("itineraryListContainer").style.display = 'block';
+                } else {
+                    alert("No itineraries found.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to retrieve itineraries.");
+            });
+    }
+
 </script>
 </body>
 </html>

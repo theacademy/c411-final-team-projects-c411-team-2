@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AmadeusService {
 
-    LocationCode getCityLocations(String keyword) throws ResponseException;
+    String getCityLocations(String keyword) throws ResponseException;
 
     List<List<Flight>> getFlights(String originaLocationCode, String destinationLocationCode, LocalDate departureDate, LocalDate returnDate, int numberAdults, int maxPrice, boolean isNonStop ) throws ResponseException;
     //https://developers.amadeus.com/self-service/category/flights/api-doc/flight-offers-search/api-reference

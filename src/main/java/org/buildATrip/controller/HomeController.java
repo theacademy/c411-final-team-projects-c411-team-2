@@ -10,4 +10,10 @@ public class HomeController {
     public String index(Model model) {
         return "index"; // Returns "index.html" from the templates folder
     }
+
+
+    @GetMapping("/itinerary/")
+    public String showItineraryPage() {
+        return "itinerary"; // Returns the Thymeleaf template (itinerary.html)
+    }
 }

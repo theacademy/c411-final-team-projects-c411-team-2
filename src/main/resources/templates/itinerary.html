@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerary Planner</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            height: 100vh; /* Full screen height */
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px; /* Space between the heading and the text fields */
+            font-size: 36px; /* Bigger font size */
+            color: white; /* White font color */
+        }
+
+        input {
+            margin: 10px 0; /* Space between the text fields */
+            padding: 10px;
+            width: 80%; /* Make the inputs take up 80% of the container width */
+            max-width: 400px; /* Ensure inputs don't grow too wide */
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            width: 50%; /* Button width */
+            max-width: 200px; /* Max width for the button */
+            margin-top: 20px; /* Space between input fields and the button */
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Plan Your Itinerary</h2>
+    <input type="text" id="userCreated" placeholder="User ID">
+    <input type="text" id="numOfAdults" placeholder="Number of Adults">
+    <input type="number" id="maxFlightPrice" placeholder="Max Flight Price">
+    <input type="number" id="maxHotelPrice" placeholder="Max Hotel Price">
+    <input type="number" id="maxActivityPrice" placeholder="Max Activity Price">
+    <input type="date" id="departureDate">
+    <input type="date" id="returnDate">
+    <button onclick="createItinerary()">Create Itinerary</button>
+</div>
+
+<script>
+
+function createItinerary() {
+        const userCreated = parseInt(document.getElementById("userCreated").value);
+        const numOfAdults = parseInt(document.getElementById("numOfAdults").value);
+        const maxFlightPrice = document.getElementById("maxFlightPrice").value;
+        const maxHotelPrice = document.getElementById("maxHotelPrice").value;
+        const maxActivityPrice = document.getElementById("maxActivityPrice").value;
+        const departureDate = document.getElementById("departureDate").value;
+        const returnDate = document.getElementById("returnDate").value;
+
+        if (!userCreated || !maxFlightPrice || !maxHotelPrice || !maxActivityPrice || !departureDate || !returnDate) {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        const url = `http://localhost:8080/itinerary/create?userId=${userCreated}&numAdults=2&priceRangeFlights=${maxFlightPrice}&priceRangeHotel=${maxHotelPrice}&priceRangeActivity=${maxActivityPrice}&startDate=${departureDate}&endDate=${returnDate}`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())  // Assuming the server responds with JSON
+        .then(data => {
+            console.log('Success:', data);
+            // Optionally, you can redirect or update the UI based on response
+             alert("Itinerary created successfully!");
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert("Error");
+        });
+    }
+</script>
+</body>
+</html>

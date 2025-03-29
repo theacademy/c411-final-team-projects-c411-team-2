@@ -28,5 +28,9 @@ public interface ItineraryService {
 
     void deleteAllItinerary();
 
+    void removeFlightFromItinerary(int itineraryId, int flightId);
 
+    void removeHotelFromItinerary(int itineraryId, int hotelId);
+
+    void removeActivityFromItinerary(int itineraryId, int activityId);
 }

@@ -171,6 +171,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     }
 
     // Methods for removing resources from itineraries could be added here
+    @Override
     @Transactional
     public void removeFlightFromItinerary(int itineraryId, int flightId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
@@ -187,11 +188,14 @@ public class ItineraryServiceImpl implements ItineraryService {
             flight.getItineraryList().remove(itinerary);
         }
 
+        itinerary.setTotalPrice(updateItineraryCost(itinerary.getTotalPrice(), flight.getPrice().negate()));
+
         // Save both entities
         itineraryRepo.save(itinerary);
         flightRepo.save(flight);
     }
 
+    @Override
     @Transactional
     public void removeHotelFromItinerary(int itineraryId, int hotelId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
@@ -208,11 +212,14 @@ public class ItineraryServiceImpl implements ItineraryService {
             hotel.getItineraryList().remove(itinerary);
         }
 
+        itinerary.setTotalPrice(updateItineraryCost(itinerary.getTotalPrice(), hotel.getPrice().negate()));
+
         // Save both entities
         itineraryRepo.save(itinerary);
         hotelRepo.save(hotel);
     }
 
+    @Override
     @Transactional
     public void removeActivityFromItinerary(int itineraryId, int activityId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
@@ -228,6 +235,8 @@ public class ItineraryServiceImpl implements ItineraryService {
         if (activity.getItineraryList() != null) {
             activity.getItineraryList().remove(itinerary);
         }
+
+        itinerary.setTotalPrice(updateItineraryCost(itinerary.getTotalPrice(), activity.getPrice().negate()));
 
         // Save both entities
         itineraryRepo.save(itinerary);

@@ -46,9 +46,9 @@ class HotelServiceImplTest {
 
         try {
             Hotel hotelSavedWithId = hotelService.createHotel(hotel);
-            Hotel shoudBeTOMPCATS = hotelService.getHotelById(1);
+            Hotel shoudBeTOMPCATS = hotelService.getHotelById(hotelSavedWithId.getHotel_id());
             assertEquals(hotelSavedWithId.getHotel_id(), shoudBeTOMPCATS.getHotel_id(), "Id should match");
-            assertEquals(hotelSavedWithId.getName(), shoudBeTOMPCATS.getName());
+            assertEquals(hotelSavedWithId.getName(), shoudBeTOMPCATS.getName(), "Name should match");
 
         } catch (Exception e) {
             fail("Should not have thrown exception");
@@ -56,10 +56,10 @@ class HotelServiceImplTest {
 
     }
 
-/*    @Test
+    @Test
     void createHotel() {
         Hotel hotel = new Hotel();
-        hotel.setName("HotelName");
+        hotel.setName("MTL hotel");
         hotel.setPrice(new BigDecimal("150.00"));
         hotel.setCheckinDate(LocalDate.parse("2025-06-10"));
         hotel.setCheckoutDate(LocalDate.parse("2025-06-15"));
@@ -69,10 +69,11 @@ class HotelServiceImplTest {
         hotel.setBoardType(BoardType.BREAKFAST);
 
         try {
-            hotelService.createHotel(hotel);
-            Hotel shoudBeZZNCENVX = hotelService.getHotelById("ZZNCENVX");
-            assertEquals(hotel.getName(), shoudBeZZNCENVX.getName(), "Name should match");
-            assertEquals(hotel.getHotel_id(), shoudBeZZNCENVX.getHotel_id(), "Id should match");
+            Hotel savedHotelWithId = hotelService.createHotel(hotel);
+            int hotel_id = savedHotelWithId.getHotel_id();
+            Hotel shoudBeMTLHotel = hotelService.getHotelById(hotel_id);
+            assertEquals(hotel.getName(), shoudBeMTLHotel.getName(), "Name should match");
+            assertEquals(hotel.getHotel_id(), shoudBeMTLHotel.getHotel_id(), "Id should match");
 
         } catch (Exception e) {
             fail("Should not have thrown exception");
@@ -84,8 +85,7 @@ class HotelServiceImplTest {
     void deleteHotel() {
 
         Hotel hotel = new Hotel();
-        hotel.setHotel_id("ZZNCENVX");
-        hotel.setName("HotelName");
+        hotel.setName("Hotel Miami");
         hotel.setPrice(new BigDecimal("150.00"));
         hotel.setCheckinDate(LocalDate.parse("2025-06-10"));
         hotel.setCheckoutDate(LocalDate.parse("2025-06-15"));
@@ -95,17 +95,17 @@ class HotelServiceImplTest {
         hotel.setBoardType(BoardType.BREAKFAST);
 
         try {
-            hotelService.createHotel(hotel);
-            Hotel addedHotel = hotelService.getHotelById("ZZNCENVX");
+            Hotel hotelSavedWithId = hotelService.createHotel(hotel);
+            Hotel addedHotel = hotelService.getHotelById(hotelSavedWithId.getHotel_id());
 
             assertEquals(hotel.getHotel_id(), addedHotel.getHotel_id(), "Should be the same hotel id");
-
-            hotelService.deleteHotel("ZZNCENVX");
-            Hotel shouldBeNull = hotelService.getHotelById("ZZNCENVX");
-            assertNull(shouldBeNull, "ZZNCENVX should not exists");
+            int hotel_id = hotelSavedWithId.getHotel_id();
+            hotelService.deleteHotel(hotel_id);
+            Hotel shouldBeNull = hotelService.getHotelById(hotel_id);
+            assertNull(shouldBeNull, "Hotel Miami should not exists");
         } catch (Exception e) {
             fail("Should not have thrown exception");
         }
 
-    }*/
+    }
 }

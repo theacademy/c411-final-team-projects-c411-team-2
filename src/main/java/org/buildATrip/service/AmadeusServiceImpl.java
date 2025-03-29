@@ -1,9 +1,10 @@
 package org.buildATrip.service;
 
 import com.amadeus.Response;
+import com.amadeus.referenceData.Locations;
 import com.amadeus.resources.FlightDestination;
 import com.amadeus.resources.FlightOfferSearch;
-import com.amadeus.resources.HotelOffer;
+import com.amadeus.resources.Location;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +16,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +23,6 @@ import java.util.concurrent.TimeUnit;
 import com.amadeus.Amadeus;
 import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
-import com.amadeus.referenceData.Locations;
-import com.amadeus.resources.Location;
 import org.buildATrip.dao.LocationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +38,36 @@ public class AmadeusServiceImpl implements AmadeusService {
         this.amadeus = amadeus;
         this.locationCodeRepository = locationCodeRepository;
     }
+
+    public String getCityLocations(String keyword) throws ResponseException {
+        bypassRateLimit();
+        try {
+            Response response = amadeus.get("/v1/reference-data/locations/cities",
+                    Params.with("keyword", keyword)
+                            .and("max", 1));
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String locationCode;
+            try {
+                JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+                locationCode = rootNode.get("data").get(0).get("iataCode").asText();
+
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (locationCode==null){
+                throw new Exception("Could not find a city with name " + keyword + " ");
+            }
+
+            return locationCode;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
 
     public LocationCode getAirportLocations(String keyword) throws ResponseException {
         // First check if we already have this location code in our database
@@ -69,13 +97,14 @@ public class AmadeusServiceImpl implements AmadeusService {
     }
 
 
+
     @Override
     public List<List<Flight>> getFlights(String originaLocationCode, String destinationLocationCode, LocalDate departureDate, LocalDate returnDate, int numberAdults, int maxPrice, boolean isNonStop) throws ResponseException {
+
         FlightOfferSearch[] flightOffers = amadeus.shopping.flightOffersSearch.get(
                 Params.with("originLocationCode", originaLocationCode)
                         .and("destinationLocationCode", destinationLocationCode)
                         .and("departureDate", departureDate)
-                        // .and("returnDate", returnDate)
                         .and("adults", numberAdults)
                         .and("children", 0)
                         .and("infants", 0)
@@ -121,6 +150,8 @@ public class AmadeusServiceImpl implements AmadeusService {
                                                       int numberAdults,
                                                       int maxPrice,
                                                       boolean isNonStop) throws ResponseException {
+
+
         FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(
                 Params.with("origin", originLocationCode)
                         .and("departureDate", departureDate)
@@ -137,7 +168,7 @@ public class AmadeusServiceImpl implements AmadeusService {
         for (int i = 0; i < count; i++) {
             try {
                 List<List<Flight>> flightOffers = getFlights(
-                        originLocationCode,
+                        flightDestinations[i].getOrigin(),
                         flightDestinations[i].getDestination(),
                         departureDate,
                         departureDate.plusDays(duration),
@@ -169,7 +200,6 @@ public class AmadeusServiceImpl implements AmadeusService {
 
     @Override
     public List<Hotel> getHotelsByCity(String cityCode, int numberAdults, LocalDate checkinDate, LocalDate checkoutDate, String priceRange, BoardType boardType) throws ResponseException {
-
         Response response = amadeus.get("/v1/reference-data/locations/hotels/by-city",
                 Params.with("cityCode", cityCode));
 
@@ -185,28 +215,13 @@ public class AmadeusServiceImpl implements AmadeusService {
             throw new RuntimeException(e);
         }
 
-
-//        HotelOffer[] offers = amadeus.shopping.hotelOffers.get(
-//                Params.with("hotelIds", hotelIds)
-//                        .and("adult", numberAdults)
-//                        .and("checkInDate", checkinDate)
-//                        .and("checkOutDate", checkoutDate)
-//                        .and("countryOfResidence", "CAN")
-//                        .and("roomQuantity", 1)
-//                        .and("price", priceRange)  //200-300 string!
-//                        //.and("currency", "CAD")
-//                        //.and("boardType", boardType)
-//
-//        );
         Response response2 = amadeus.get("/v3/shopping/hotel-offers",
                 Params.with("hotelIds", hotelIds)
                         .and("adult", numberAdults)
                         .and("checkInDate", checkinDate)
                         .and("checkOutDate", checkoutDate)
-                        //.and("countryOfResidence", "CAN")
                         .and("roomQuantity", 1)
                         .and("price", priceRange)  //200-300 string!
-                        //.and("currency", "CAD")
                         .and("boardType", boardType)
         );
         ObjectMapper objectMapper2 = new ObjectMapper();

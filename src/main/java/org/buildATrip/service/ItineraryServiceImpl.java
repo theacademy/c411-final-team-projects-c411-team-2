@@ -171,10 +171,10 @@ public class ItineraryServiceImpl implements ItineraryService {
     }
 
     @Transactional
-    public void removeHotelFromItinerary(int itineraryId, String hotelId) {
+    public void removeHotelFromItinerary(int itineraryId, int hotelId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
-        Hotel hotel = hotelRepo.findById(Integer.parseInt(hotelId))
+        Hotel hotel = hotelRepo.findById(hotelId)
                 .orElseThrow(() -> new EntityNotFoundException("Hotel not found"));
 
         // Remove the relationship from both sides

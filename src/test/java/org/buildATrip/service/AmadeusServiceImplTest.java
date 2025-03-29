@@ -40,10 +40,8 @@ class AmadeusServiceImplTest {
     @Test
     void getLocation() {
         try {
-            LocationCode actual = amadeusService.getAirportLocations("LHR");
-            assertEquals("London".toUpperCase(), actual.getCityName());
-
-            assertNotNull(locationCodeRepository.findById("LHR"));
+            String actual = amadeusService.getCityLocations("London");
+            assertEquals("LON", actual);
 
         } catch (Exception e) {
             fail("Should not have thrown exception");
@@ -54,7 +52,6 @@ class AmadeusServiceImplTest {
     @Test
     void getFlights() {
         try {
-
             List<List<Flight>> flights = amadeusService.getFlights("NYC", "PAR", LocalDate.parse("2026-01-02"), LocalDate.parse("2026-01-20"), 2, 2000, false);
             assertNotNull(flights);
             assertEquals(3, flights.size());
@@ -67,7 +64,8 @@ class AmadeusServiceImplTest {
     @Test
     void getFlightsByDestination() {
         try {
-            List<List<Flight>> flights = amadeusService.getFlightsByDestination("NYC", LocalDate.parse("2025-04-07"), 14, 2, 2000, false);
+
+            List<List<Flight>> flights = amadeusService.getFlightsByDestination("New York", LocalDate.parse("2025-04-07"), 14, 2, 2000, false);
             assertNotNull(flights);
             assertEquals(3, flights.size());
         } catch (Exception e) {
@@ -91,7 +89,7 @@ class AmadeusServiceImplTest {
     @Test
     void getHotelsByCity() {
         try {
-            List<Hotel> hotels = amadeusService.getHotelsByCity("PAR", 1, LocalDate.parse("2025-04-15"), LocalDate.parse("2025-04-18"), "3000", BoardType.ROOM_ONLY);
+            List<Hotel> hotels = amadeusService.getHotelsByCity("Paris", 1, LocalDate.parse("2025-04-15"), LocalDate.parse("2025-04-18"), "3000", BoardType.ROOM_ONLY);
             assertNotNull(hotels);
         } catch (Exception e) {
             fail("Should not have thrown an exception", e);

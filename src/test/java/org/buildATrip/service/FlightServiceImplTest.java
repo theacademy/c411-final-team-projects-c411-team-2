@@ -1,16 +1,20 @@
 package org.buildATrip.service;
 
+import org.buildATrip.TestApplicationConfiguration;
 import org.buildATrip.dao.FlightRepository;
 import org.buildATrip.dao.LocationCodeRepository;
 import org.buildATrip.entity.Flight;
 import org.buildATrip.entity.LocationCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,10 +25,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@TestPropertySource(locations = "classpath:application.properties")
-@Import({FlightServiceImpl.class, AmadeusServiceImpl.class})
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = TestApplicationConfiguration.class)
 public class FlightServiceImplTest {
 
     @Autowired
@@ -34,13 +36,19 @@ public class FlightServiceImplTest {
     private FlightRepository flightRepository;
 
     @Autowired
+    private AmadeusService amadeusService;
+
+    @Autowired
     private LocationCodeRepository locationCodeRepository;
+
+
 
     private LocationCode nyc;
     private LocationCode lax;
     private LocationCode mia;
     private Flight nycToLax;
     private Flight miaToNyc;
+
 
     @BeforeEach
     public void setUp() {
@@ -62,6 +70,7 @@ public class FlightServiceImplTest {
         nycToLax.setDuration(LocalTime.of(6, 30));
         nycToLax.setPrice(new BigDecimal("350.00"));
         nycToLax.setIsNonstop(true);
+        nycToLax.setFlightType("OUTBOUND");
 
         miaToNyc = new Flight();
         miaToNyc.setOriginCode(mia);
@@ -71,6 +80,7 @@ public class FlightServiceImplTest {
         miaToNyc.setDuration(LocalTime.of(3, 15));
         miaToNyc.setPrice(new BigDecimal("275.00"));
         miaToNyc.setIsNonstop(true);
+        miaToNyc.setFlightType("OUTBOUND");
 
         // Save test flights
         nycToLax = flightRepository.save(nycToLax);
@@ -112,6 +122,7 @@ public class FlightServiceImplTest {
         chiToLax.setDuration(LocalTime.of(4, 45));
         chiToLax.setPrice(new BigDecimal("310.00"));
         chiToLax.setIsNonstop(true);
+        chiToLax.setFlightType("OUTBOUND");
 
         // Make sure to save the location code first
         locationCodeRepository.save(chiToLax.getOriginCode());
@@ -137,6 +148,7 @@ public class FlightServiceImplTest {
         firstLeg.setDuration(LocalTime.of(3, 0));
         firstLeg.setPrice(null); // Price is only on the last leg for connecting flights
         firstLeg.setIsNonstop(true);
+        firstLeg.setFlightType("OUTBOUND");
 
         Flight secondLeg = new Flight();
         secondLeg.setOriginCode(mia);
@@ -146,6 +158,7 @@ public class FlightServiceImplTest {
         secondLeg.setDuration(LocalTime.of(5, 45));
         secondLeg.setPrice(new BigDecimal("520.00")); // Total price on the last leg
         secondLeg.setIsNonstop(true);
+        secondLeg.setFlightType("OUTBOUND");
 
         List<Flight> connectedFlights = Arrays.asList(firstLeg, secondLeg);
 
@@ -184,6 +197,7 @@ public class FlightServiceImplTest {
         assertEquals(miaToNyc.getFlightId(), flights.get(0).getFlightId());
     }
 
+    //Test failing (itinerary id=1 not existing, do we even need this function?
     @Test
     public void testSelectAndSaveOutboundFlights() {
         // Arrange
@@ -195,6 +209,7 @@ public class FlightServiceImplTest {
         firstLeg.setDuration(LocalTime.of(3, 0));
         firstLeg.setPrice(null);
         firstLeg.setIsNonstop(true);
+        firstLeg.setFlightType("OUTBOUND");
 
         Flight secondLeg = new Flight();
         secondLeg.setOriginCode(mia);
@@ -204,6 +219,7 @@ public class FlightServiceImplTest {
         secondLeg.setDuration(LocalTime.of(5, 45));
         secondLeg.setPrice(new BigDecimal("495.00"));
         secondLeg.setIsNonstop(true);
+        secondLeg.setFlightType("OUTBOUND");
 
         List<Flight> outboundFlights = Arrays.asList(firstLeg, secondLeg);
 

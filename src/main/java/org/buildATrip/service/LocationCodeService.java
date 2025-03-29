@@ -45,20 +45,20 @@ public class LocationCodeService {
      * Find a location code by keyword, or create it if it doesn't exist
      * by calling the Amadeus API
      */
-    public LocationCode findOrCreateLocationCode(String keyword) throws ResponseException {
-        // First try to find it in the database
-        Optional<LocationCode> existingLocation = locationCodeRepository.findById(keyword);
-        if (existingLocation.isPresent()) {
-            return existingLocation.get();
-        }
-
-        // If not found by code, try to find by city name
-        LocationCode locationByCity = locationCodeRepository.findByCityNameIgnoreCase(keyword);
-        if (locationByCity != null) {
-            return locationByCity;
-        }
-
-        // If not found at all, call Amadeus to get it
-        return amadeusService.getAirportLocations(keyword);
-    }
+//    public LocationCode findOrCreateLocationCode(String keyword) throws ResponseException {
+//        // First try to find it in the database
+//        Optional<LocationCode> existingLocation = locationCodeRepository.findById(keyword);
+//        if (existingLocation.isPresent()) {
+//            return existingLocation.get();
+//        }
+//
+//        // If not found by code, try to find by city name
+//        LocationCode locationByCity = locationCodeRepository.findByCityNameIgnoreCase(keyword);
+//        if (locationByCity != null) {
+//            return locationByCity;
+//        }
+//
+//        // If not found at all, call Amadeus to get it
+//        return amadeusService.getCityLocations(keyword);
+//    }
 }

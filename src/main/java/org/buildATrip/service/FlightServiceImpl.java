@@ -137,7 +137,7 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     @Transactional
-    public List<Flight> selectAndSaveOutboundFlights(List<Flight> selectedFlights, Integer itineraryId) {
+    public List<Flight> selectAndSaveOutboundFlights(List<Flight> selectedFlights, Integer itineraryId) throws InsufficientBudgetException {
         // Set flight type for all flights
         for (Flight flight : selectedFlights) {
             flight.setFlightType(FLIGHT_TYPE_OUTBOUND);
@@ -156,7 +156,7 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     @Transactional
-    public List<Flight> selectAndSaveReturnFlights(List<Flight> selectedFlights, Integer itineraryId) {
+    public List<Flight> selectAndSaveReturnFlights(List<Flight> selectedFlights, Integer itineraryId) throws InsufficientBudgetException {
         // Set flight type for all flights
         for (Flight flight : selectedFlights) {
             flight.setFlightType(FLIGHT_TYPE_RETURN);
@@ -175,7 +175,7 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     @Transactional
-    public List<Flight> saveFlightsToItinerary(List<Flight> outboundFlights, List<Flight> returnFlights, Integer itineraryId) {
+    public List<Flight> saveFlightsToItinerary(List<Flight> outboundFlights, List<Flight> returnFlights, Integer itineraryId) throws InsufficientBudgetException {
         List<Flight> allSavedFlights = new ArrayList<>();
 
         // Save outbound flights

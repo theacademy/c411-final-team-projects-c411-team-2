@@ -14,11 +14,11 @@ public interface ItineraryService {
 
     void deleteItinerary(int id);
 
-    Itinerary addFlightToItinerary(int itineraryId, int flightId);
+    Itinerary addFlightToItinerary(int itineraryId, int flightId) throws InsufficientBudgetException;
 
-    Itinerary addHotelToItinerary(int itineraryId, Integer hotelId);
+    Itinerary addHotelToItinerary(int itineraryId, Integer hotelId) throws InsufficientBudgetException;
 
-    Itinerary addActivityToItinerary(int itineraryId, int activityId);
+    Itinerary addActivityToItinerary(int itineraryId, int activityId) throws InsufficientBudgetException;
 
     // Itinerary addPoisToItinerary(int itineraryId, int poisId);
 

@@ -51,7 +51,163 @@ class ItineraryServiceImplTest {
     }
 
     @Test
-    void addHotelToItinenary() {
+    void addHotelFlightActivityToItinerary() {
+
+        Hotel hotel1 = new Hotel();
+        hotel1.setName("HotelName");
+        hotel1.setPrice(new BigDecimal("250.00"));
+        hotel1.setCheckinDate(LocalDate.parse("2025-06-10"));
+        hotel1.setCheckoutDate(LocalDate.parse("2025-06-15"));
+        hotel1.setAddress("France");
+        hotel1.setLatitude(new BigDecimal("43.66"));
+        hotel1.setLongitude(new BigDecimal("7.21"));
+        hotel1.setBoardType(BoardType.BREAKFAST);
+
+        Hotel hotelWithId = hotelService.createHotel(hotel1);
+
+        LocationCode originCode = new LocationCode("JFK", "New York");
+        LocationCode destCode = new LocationCode("LAX", "Los Angeles");
+
+        locationCodeRepository.save(originCode);
+        locationCodeRepository.save(destCode);
+
+        Flight testFlight = new Flight();
+        testFlight.setPrice(new BigDecimal("500.00"));
+        testFlight.setDuration(LocalTime.of(6, 0));
+        testFlight.setDate(LocalDate.now());
+        testFlight.setDepartureTime(LocalTime.of(10, 0));
+        testFlight.setIsNonstop(true);
+        testFlight.setOriginCode(originCode);
+        testFlight.setDestinationCode(destCode);
+        testFlight.setFlightType("flightType");
+
+        Flight flightWithId = flightService.saveFlight(testFlight);
+
+        Activity activity = new Activity();
+        activity.setName("Skydiving");
+        activity.setDescription("Jump from a plane and experience freedom.");
+        activity.setRating(4.8);
+        activity.setPrice(new BigDecimal("250.00"));
+        activity.setLatitude(new BigDecimal("40.7128"));
+        activity.setLongitude(new BigDecimal("-74.0060"));
+
+        Activity activityWithId = activityService.createActivity(activity);
+
+        User user1 = new User();
+        user1.setFirstName("John");
+        user1.setLastName("Doe");
+        user1.setEmail("john.doe@example.com");
+        user1.setPassword("securepassword");
+        user1.setOriginCity("New York");
+        user1.setDateOfBirth(LocalDate.of(1995, 5, 20));
+
+        User user1WithId = userService.registerUser(user1);
+
+        Itinerary itinerary = new Itinerary();
+        itinerary.setNumAdults(2);
+        itinerary.setPriceRangeFlight(new BigDecimal("500.00"));
+        itinerary.setPriceRangeHotel(new BigDecimal("300.00"));
+        itinerary.setPriceRangeActivity(new BigDecimal("250.00"));
+        itinerary.setConfirmed(false);
+        itinerary.setStartDate(LocalDate.of(2025, 6, 10));
+        itinerary.setEndDate(LocalDate.of(2025, 6, 20));
+        itinerary.setHotelsList(new ArrayList<>());
+        itinerary.setActivitiesList(new ArrayList<>());
+        itinerary.setFlightsList(new ArrayList<>());
+        itinerary.setUser(user1WithId);
+
+        Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
+        try {
+            Itinerary updatedItinerary = itineraryService.addHotelToItinerary(insertItinerary.getId(), hotelWithId.getHotel_id());
+            updatedItinerary = itineraryService.addFlightToItinerary(insertItinerary.getId(), flightWithId.getFlightId());
+            updatedItinerary = itineraryService.addActivityToItinerary(insertItinerary.getId(), activityWithId.getId());
+            assertEquals(new BigDecimal("1000.00"), updatedItinerary.getTotalPrice());
+        } catch (InsufficientBudgetException ex) {
+            fail("Should not have thrown an exception");
+        }
+
+    }
+
+    @Test
+    void addHotelFlightActivityToItineraryWithInsufficientBudget() {
+
+        Hotel hotel1 = new Hotel();
+        hotel1.setName("HotelName");
+        hotel1.setPrice(new BigDecimal("250.00"));
+        hotel1.setCheckinDate(LocalDate.parse("2025-06-10"));
+        hotel1.setCheckoutDate(LocalDate.parse("2025-06-15"));
+        hotel1.setAddress("France");
+        hotel1.setLatitude(new BigDecimal("43.66"));
+        hotel1.setLongitude(new BigDecimal("7.21"));
+        hotel1.setBoardType(BoardType.BREAKFAST);
+
+        Hotel hotelWithId = hotelService.createHotel(hotel1);
+
+        LocationCode originCode = new LocationCode("JFK", "New York");
+        LocationCode destCode = new LocationCode("LAX", "Los Angeles");
+
+        locationCodeRepository.save(originCode);
+        locationCodeRepository.save(destCode);
+
+        Flight testFlight = new Flight();
+        testFlight.setPrice(new BigDecimal("500.00"));
+        testFlight.setDuration(LocalTime.of(6, 0));
+        testFlight.setDate(LocalDate.now());
+        testFlight.setDepartureTime(LocalTime.of(10, 0));
+        testFlight.setIsNonstop(true);
+        testFlight.setOriginCode(originCode);
+        testFlight.setDestinationCode(destCode);
+        testFlight.setFlightType("flightType");
+
+        Flight flightWithId = flightService.saveFlight(testFlight);
+
+        Activity activity = new Activity();
+        activity.setName("Skydiving");
+        activity.setDescription("Jump from a plane and experience freedom.");
+        activity.setRating(4.8);
+        activity.setPrice(new BigDecimal("250.00"));
+        activity.setLatitude(new BigDecimal("40.7128"));
+        activity.setLongitude(new BigDecimal("-74.0060"));
+
+        Activity activityWithId = activityService.createActivity(activity);
+
+        User user1 = new User();
+        user1.setFirstName("John");
+        user1.setLastName("Doe");
+        user1.setEmail("john.doe@example.com");
+        user1.setPassword("securepassword");
+        user1.setOriginCity("New York");
+        user1.setDateOfBirth(LocalDate.of(1995, 5, 20));
+
+        User user1WithId = userService.registerUser(user1);
+
+        Itinerary itinerary = new Itinerary();
+        itinerary.setNumAdults(2);
+        itinerary.setPriceRangeFlight(new BigDecimal("100.00"));
+        itinerary.setPriceRangeHotel(new BigDecimal("24.06"));
+        itinerary.setPriceRangeActivity(new BigDecimal("13.00"));
+        itinerary.setConfirmed(false);
+        itinerary.setStartDate(LocalDate.of(2025, 6, 10));
+        itinerary.setEndDate(LocalDate.of(2025, 6, 20));
+        itinerary.setHotelsList(new ArrayList<>());
+        itinerary.setActivitiesList(new ArrayList<>());
+        itinerary.setFlightsList(new ArrayList<>());
+        itinerary.setUser(user1WithId);
+
+        Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
+        try {
+            Itinerary updatedItinerary = itineraryService.addHotelToItinerary(insertItinerary.getId(), hotelWithId.getHotel_id());
+            updatedItinerary = itineraryService.addFlightToItinerary(insertItinerary.getId(), flightWithId.getFlightId());
+            updatedItinerary = itineraryService.addActivityToItinerary(insertItinerary.getId(), activityWithId.getId());
+            fail("Should have thrown an exception");
+        } catch (InsufficientBudgetException ex) {
+            // expected to catch exception
+        }
+
+    }
+
+    @Test
+    void addHotelToItinerary() {
 
         Hotel hotel1 = new Hotel();
         hotel1.setName("HotelName");
@@ -82,7 +238,6 @@ class ItineraryServiceImplTest {
         itinerary.setPriceRangeHotel(new BigDecimal("300.00"));
         itinerary.setPriceRangeActivity(new BigDecimal("150.00"));
         itinerary.setConfirmed(false);
-        itinerary.setTotalPrice(new BigDecimal("950.00"));
         itinerary.setStartDate(LocalDate.of(2025, 6, 10));
         itinerary.setEndDate(LocalDate.of(2025, 6, 20));
         itinerary.setHotelsList(new ArrayList<>());
@@ -92,17 +247,21 @@ class ItineraryServiceImplTest {
 
         Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
 
+        try {
+            Itinerary updatedItinerary = itineraryService.addHotelToItinerary(insertItinerary.getId(), savedHotel.getHotel_id());
+            Hotel updatedHotel = hotelService.findHotelWithItineraryList(savedHotel.getHotel_id());
+            assertEquals(1, updatedItinerary.getHotelsList().size(), "Should contains only 1 hotel");
+            assertEquals(1, updatedHotel.getItineraryList().size(), "Should contains 1 itinerary");
+            assertEquals(hotel1.getPrice(), updatedItinerary.getTotalPrice());
+        } catch (InsufficientBudgetException ex) {
+            fail("Should not have thrown an exception");
+        }
 
-        Itinerary updatedItinerary = itineraryService.addHotelToItinerary(insertItinerary.getId(), savedHotel.getHotel_id());
-        Hotel updatedHotel = hotelService.findHotelWithItineraryList(savedHotel.getHotel_id());
-
-        assertEquals(1, updatedItinerary.getHotelsList().size(), "Should contains only 1 hotel");
-        assertEquals(1, updatedHotel.getItineraryList().size(), "Should contains 1 itinenary");
     }
 
 
     @Test
-    void addFlightToItinenary() {
+    void addFlightToItinerary() {
 
         LocationCode originCode = new LocationCode("JFK", "New York");
         LocationCode destCode = new LocationCode("LAX", "Los Angeles");
@@ -134,11 +293,10 @@ class ItineraryServiceImplTest {
 
         Itinerary itinerary = new Itinerary();
         itinerary.setNumAdults(2);
-        itinerary.setPriceRangeFlight(new BigDecimal("500.00"));
+        itinerary.setPriceRangeFlight(new BigDecimal("299.99"));
         itinerary.setPriceRangeHotel(new BigDecimal("300.00"));
         itinerary.setPriceRangeActivity(new BigDecimal("150.00"));
         itinerary.setConfirmed(false);
-        itinerary.setTotalPrice(new BigDecimal("950.00"));
         itinerary.setStartDate(LocalDate.of(2025, 6, 10));
         itinerary.setEndDate(LocalDate.of(2025, 6, 20));
         itinerary.setHotelsList(new ArrayList<>());
@@ -148,13 +306,19 @@ class ItineraryServiceImplTest {
 
         Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
 
-        Itinerary updatedItinerary = itineraryService.addFlightToItinerary(insertItinerary.getId(), flightWithId.getFlightId());
-        assertEquals(1, updatedItinerary.getFlightsList().size(), "Should contains only 1 flight");
+        Itinerary updatedItinerary = null;
+        try {
+            updatedItinerary = itineraryService.addFlightToItinerary(insertItinerary.getId(), flightWithId.getFlightId());
+            assertEquals(1, updatedItinerary.getFlightsList().size(), "Should contains only 1 flight");
+        } catch (InsufficientBudgetException e) {
+            fail("Should not have thrown an exception");
+        }
+
 
     }
 
     @Test
-    void addActivityToItinenary() {
+    void addActivityToItinerary() {
 
         Activity activity = new Activity();
         activity.setName("Skydiving");
@@ -180,7 +344,7 @@ class ItineraryServiceImplTest {
         itinerary.setNumAdults(2);
         itinerary.setPriceRangeFlight(new BigDecimal("500.00"));
         itinerary.setPriceRangeHotel(new BigDecimal("300.00"));
-        itinerary.setPriceRangeActivity(new BigDecimal("150.00"));
+        itinerary.setPriceRangeActivity(new BigDecimal("250.00"));
         itinerary.setConfirmed(false);
         itinerary.setTotalPrice(new BigDecimal("950.00"));
         itinerary.setStartDate(LocalDate.of(2025, 6, 10));
@@ -191,9 +355,12 @@ class ItineraryServiceImplTest {
         itinerary.setUser(user1WithId);
 
         Itinerary insertItinerary = itineraryService.createItinerary(itinerary);
-        Itinerary updatedItinerary = itineraryService.addActivityToItinerary(insertItinerary.getId(), activityWithId.getId());
-
-        assertEquals(1, updatedItinerary.getActivitiesList().size(), "Should contains only 1 activity");
+        try {
+            Itinerary updatedItinerary = itineraryService.addActivityToItinerary(insertItinerary.getId(), activityWithId.getId());
+            assertEquals(1, updatedItinerary.getActivitiesList().size(), "Should contains only 1 activity");
+        } catch (InsufficientBudgetException e) {
+            fail("Should not have thrown an exception");
+        }
 
     }
 

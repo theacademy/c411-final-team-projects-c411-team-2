@@ -14,8 +14,9 @@ import java.util.Objects;
 public class Hotel {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "hotel_id", nullable = false)
-    private String hotel_id;
+    private Integer hotel_id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -60,7 +61,7 @@ public class Hotel {
         this.boardType = boardType;
     }
 
-    public String getHotel_id() {
+    public Integer getHotel_id() {
         return hotel_id;
     }
 
@@ -100,7 +101,7 @@ public class Hotel {
         return itineraryList;
     }
 
-    public void setHotel_id(String hotel_id) {
+    public void setHotel_id(Integer hotel_id) {
         this.hotel_id = hotel_id;
     }
 

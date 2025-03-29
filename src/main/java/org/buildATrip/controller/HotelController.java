@@ -32,7 +32,7 @@ public class HotelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Hotel> getHotelById(@PathVariable("id") String id) {
+    public ResponseEntity<Hotel> getHotelById(@PathVariable("id") Integer id) {
         Hotel hotel = hotelService.getHotelById(id);
         return (hotel == null) ? new ResponseEntity<Hotel>(hotel, HttpStatus.NOT_FOUND) : new ResponseEntity<Hotel>(hotel, HttpStatus.OK);
     }
@@ -44,7 +44,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHotel(@PathVariable("id") String id) {
+    public ResponseEntity<Void> deleteHotel(@PathVariable("id") Integer id) {
         hotelService.deleteHotel(id);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }

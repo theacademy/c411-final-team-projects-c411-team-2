@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .antMatchers("/static/*").permitAll()
                 .antMatchers("/user/**").permitAll()
                 .antMatchers("/activity/*").permitAll()
-                .antMatchers("/hotel/*").permitAll()
+                .antMatchers("/hotel/**").permitAll()
                 .antMatchers("/flight/**").permitAll()
                 .antMatchers("/itinerary/**").permitAll()
                 .anyRequest().authenticated()

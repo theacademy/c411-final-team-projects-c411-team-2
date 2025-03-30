@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +52,15 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Override
     @Transactional
     public Itinerary createItinerary(Itinerary itinerary) {
+        if(itinerary.getPriceRangeActivity() == null) {
+            itinerary.setPriceRangeActivity(new BigDecimal("999999.99"));
+        }
+        if(itinerary.getPriceRangeHotel() == null) {
+            itinerary.setPriceRangeHotel(new BigDecimal("9999999.99"));
+        }
+        if(itinerary.getPriceRangeFlight() == null) {
+            itinerary.setPriceRangeFlight(new BigDecimal("9999999.99"));
+        }
         return itineraryRepo.save(itinerary);
     }
 
@@ -68,7 +79,7 @@ public class ItineraryServiceImpl implements ItineraryService {
 
     @Override
     @Transactional
-    public Itinerary addFlightToItinerary(int itineraryId, int flightId) {
+    public Itinerary addFlightToItinerary(int itineraryId, int flightId) throws InsufficientBudgetException {
         Itinerary currentItinerary = itineraryRepo.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
         Flight newFlight = flightRepo.findById(flightId)
@@ -83,6 +94,13 @@ public class ItineraryServiceImpl implements ItineraryService {
         if (newFlight.getItineraryList() == null) {
             newFlight.setItineraryList(new ArrayList<>());
         }
+
+        if(currentItinerary.getPriceRangeFlight().compareTo(newFlight.getPrice()) < 0) {
+            throw new InsufficientBudgetException("Your flight budget is insufficient to cover the cost!");
+        }
+
+        currentItinerary.setTotalPrice(updateItineraryCost(currentItinerary.getTotalPrice(), newFlight.getPrice()));
+
         newFlight.getItineraryList().add(currentItinerary);
         Itinerary updatedItinerary = itineraryRepo.save(currentItinerary);
         // update @ManyToMany field
@@ -92,7 +110,7 @@ public class ItineraryServiceImpl implements ItineraryService {
 
     @Override
     @Transactional
-    public Itinerary addHotelToItinerary(int itineraryId, Integer hotelId) {
+    public Itinerary addHotelToItinerary(int itineraryId, Integer hotelId) throws InsufficientBudgetException {
         Itinerary currentItinerary = itineraryRepo.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinenary not found"));
         Hotel newHotel = hotelRepo.findById(hotelId)
@@ -107,6 +125,12 @@ public class ItineraryServiceImpl implements ItineraryService {
         if (newHotel.getItineraryList() == null) {
             newHotel.setItineraryList(new ArrayList<>());
         }
+
+        if(currentItinerary.getPriceRangeHotel().compareTo(newHotel.getPrice()) < 0) {
+            throw new InsufficientBudgetException("Your hotel budget is insufficient to cover the cost!");
+        }
+
+        currentItinerary.setTotalPrice(updateItineraryCost(currentItinerary.getTotalPrice(), newHotel.getPrice()));
         newHotel.getItineraryList().add(currentItinerary);
         Itinerary updatedItinerary = itineraryRepo.save(currentItinerary);
         // update @ManyToMany field
@@ -116,7 +140,7 @@ public class ItineraryServiceImpl implements ItineraryService {
 
     @Override
     @Transactional
-    public Itinerary addActivityToItinerary(int itineraryId, int activityId) {
+    public Itinerary addActivityToItinerary(int itineraryId, int activityId) throws InsufficientBudgetException {
         Itinerary currentItinerary = itineraryRepo.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
         Activity newActivity = activityRepo.findById(activityId)
@@ -131,6 +155,13 @@ public class ItineraryServiceImpl implements ItineraryService {
         if (newActivity.getItineraryList() == null) {
             newActivity.setItineraryList(new ArrayList<>());
         }
+
+        if(currentItinerary.getPriceRangeActivity().compareTo(newActivity.getPrice()) < 0) {
+            throw new InsufficientBudgetException("Your activity budget is insufficient to cover the cost!");
+        }
+
+        currentItinerary.setTotalPrice(updateItineraryCost(currentItinerary.getTotalPrice(), newActivity.getPrice()));
+
         newActivity.getItineraryList().add(currentItinerary);
         Itinerary updatedItinerary = itineraryRepo.save(currentItinerary);
         // update @ManyToMany field
@@ -149,6 +180,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     }
 
     // Methods for removing resources from itineraries could be added here
+    @Override
     @Transactional
     public void removeFlightFromItinerary(int itineraryId, int flightId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
@@ -165,11 +197,14 @@ public class ItineraryServiceImpl implements ItineraryService {
             flight.getItineraryList().remove(itinerary);
         }
 
+        itinerary.setTotalPrice(updateItineraryCost(itinerary.getTotalPrice(), flight.getPrice().negate()));
+
         // Save both entities
         itineraryRepo.save(itinerary);
         flightRepo.save(flight);
     }
 
+    @Override
     @Transactional
     public void removeHotelFromItinerary(int itineraryId, int hotelId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
@@ -186,11 +221,14 @@ public class ItineraryServiceImpl implements ItineraryService {
             hotel.getItineraryList().remove(itinerary);
         }
 
+        itinerary.setTotalPrice(updateItineraryCost(itinerary.getTotalPrice(), hotel.getPrice().negate()));
+
         // Save both entities
         itineraryRepo.save(itinerary);
         hotelRepo.save(hotel);
     }
 
+    @Override
     @Transactional
     public void removeActivityFromItinerary(int itineraryId, int activityId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
@@ -207,8 +245,14 @@ public class ItineraryServiceImpl implements ItineraryService {
             activity.getItineraryList().remove(itinerary);
         }
 
+        itinerary.setTotalPrice(updateItineraryCost(itinerary.getTotalPrice(), activity.getPrice().negate()));
+
         // Save both entities
         itineraryRepo.save(itinerary);
         activityRepo.save(activity);
+    }
+
+    private BigDecimal updateItineraryCost(BigDecimal currentTotal, BigDecimal cost) {
+        return (currentTotal == null) ? cost.setScale(2, RoundingMode.HALF_UP) : currentTotal.add(cost).setScale(2, RoundingMode.HALF_UP);
     }
 }

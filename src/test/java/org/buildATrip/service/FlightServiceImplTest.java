@@ -224,13 +224,20 @@ public class FlightServiceImplTest {
         List<Flight> outboundFlights = Arrays.asList(firstLeg, secondLeg);
 
         // Act
-        List<Flight> savedFlights = flightService.selectAndSaveOutboundFlights(outboundFlights, 1);
+        try {
+            List<Flight> savedFlights = null;
+            savedFlights = flightService.selectAndSaveOutboundFlights(outboundFlights, 1);
 
-        // Assert
-        assertEquals(2, savedFlights.size());
-        assertNotNull(savedFlights.get(0).getFlightId());
-        assertNotNull(savedFlights.get(1).getFlightId());
-        assertEquals(savedFlights.get(1).getFlightId(), savedFlights.get(0).getNextFlightId());
+            // Assert
+            assertEquals(2, savedFlights.size());
+            assertNotNull(savedFlights.get(0).getFlightId());
+            assertNotNull(savedFlights.get(1).getFlightId());
+            assertEquals(savedFlights.get(1).getFlightId(), savedFlights.get(0).getNextFlightId());
+        } catch (InsufficientBudgetException e) {
+            fail("Should not have thrown an exception");
+        }
+
+
 
         // In a future implementation, we would also check that the flights are linked to the itinerary
         // with the correct type (OUTBOUND)

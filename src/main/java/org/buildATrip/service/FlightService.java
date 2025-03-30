@@ -123,7 +123,7 @@ public interface FlightService {
      * @param itineraryId The ID of the itinerary to link these flights to
      * @return The saved flights with established connections
      */
-    List<Flight> selectAndSaveOutboundFlights(List<Flight> selectedFlights, Integer itineraryId);
+    List<Flight> selectAndSaveOutboundFlights(List<Flight> selectedFlights, Integer itineraryId) throws InsufficientBudgetException;
 
     /**
      * Select and save return flights to an itinerary
@@ -131,7 +131,7 @@ public interface FlightService {
      * @param itineraryId The ID of the itinerary to link these flights to
      * @return The saved flights with established connections
      */
-    List<Flight> selectAndSaveReturnFlights(List<Flight> selectedFlights, Integer itineraryId);
+    List<Flight> selectAndSaveReturnFlights(List<Flight> selectedFlights, Integer itineraryId) throws InsufficientBudgetException;
 
     /**
      * Save both outbound and return flights to an itinerary
@@ -140,7 +140,7 @@ public interface FlightService {
      * @param itineraryId The ID of the itinerary to link these flights to
      * @return All saved flights with established connections
      */
-    List<Flight> saveFlightsToItinerary(List<Flight> outboundFlights, List<Flight> returnFlights, Integer itineraryId);
+    List<Flight> saveFlightsToItinerary(List<Flight> outboundFlights, List<Flight> returnFlights, Integer itineraryId) throws InsufficientBudgetException;
 
     /**
      * Delete all itinenary (mainly used for test clean up)

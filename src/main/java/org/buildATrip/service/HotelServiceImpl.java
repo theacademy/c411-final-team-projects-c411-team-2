@@ -31,8 +31,12 @@ public class HotelServiceImpl implements HotelService {
         if(numberAdults == null) {
             numberAdults = 1;
         }
+        if(checkIn != null && checkOut == null) {
+            checkOut = checkIn.plusDays(1);
+        }
+
         try {
-            return new ArrayList<>(amadeusService.getHotelsByCity(cityOriginCode, numberAdults, checkIn, checkOut, hotelBudget, boardType));
+            return new ArrayList<>(amadeusService.getHotelsByCity(cityOriginCode, numberAdults, checkIn, checkOut, "0-" + hotelBudget, boardType));
         } catch (ResponseException ignored) {
             return new ArrayList<>();
         }

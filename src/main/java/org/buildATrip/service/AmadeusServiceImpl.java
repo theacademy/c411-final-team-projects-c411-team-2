@@ -265,6 +265,7 @@ public class AmadeusServiceImpl implements AmadeusService {
         int maxIteration = (activitiesOffer.length<5) ? activitiesOffer.length : 5;
         for (int i=0; i<maxIteration; i++) {
             Activity activity = new Activity();
+            activity.setId(i + 1); //adding temp id for frontend selection
             activity.setName(activitiesOffer[i].getName());
             activity.setPrice(new BigDecimal(String.valueOf(activitiesOffer[i].getPrice().getAmount()!=null ? activitiesOffer[i].getPrice().getAmount() : 0)));
             if (activitiesOffer[i].getDescription()!=null){

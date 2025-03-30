@@ -30,6 +30,7 @@ const SearchActivitiesPage = () => {
         if (selectedIndex === null) return;
         try {
             const chosenActivity = activityOptions[selectedIndex];
+            console.log('Adding activity:', { itineraryId, chosenActivity });
             // chosenActivity has an ID property (like chosenActivity.id)
             await addActivityToItinerary(itineraryId, chosenActivity.id);
             alert('Activity added successfully!');

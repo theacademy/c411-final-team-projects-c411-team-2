@@ -23,7 +23,7 @@ public class HotelController {
     public ResponseEntity<List<Hotel>> searchHotel(@PathVariable("destination") String destinationCode,
                                                    @PathVariable("hotelBudget") String hotelBudget,
                                                    @RequestParam(required = false) Integer numberAdults,
-                                                   @RequestParam(required = false) LocalDate checkIn,
+                                                   @RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}") LocalDate checkIn,
                                                    @RequestParam(required = false) LocalDate checkOut,
                                                    @RequestParam(required = false) BoardType boardType) {
 

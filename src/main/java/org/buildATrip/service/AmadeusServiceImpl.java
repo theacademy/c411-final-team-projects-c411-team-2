@@ -223,7 +223,9 @@ public class AmadeusServiceImpl implements AmadeusService {
                         .and("roomQuantity", 1)
                         .and("price", priceRange)  //200-300 string!
                         .and("boardType", boardType)
+                        .and("currency", "USD")
         );
+
         ObjectMapper objectMapper2 = new ObjectMapper();
         List<Hotel> hotels = new ArrayList<>();
 

@@ -33,9 +33,9 @@ public class ActivityController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createActivity(@RequestBody Activity activity) {
+    public ResponseEntity<Activity> createActivity(@RequestBody Activity activity) {
         Activity createdActivity = activityService.createActivity(activity);
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return new ResponseEntity<>(createdActivity, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

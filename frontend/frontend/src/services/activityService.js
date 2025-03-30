@@ -11,8 +11,13 @@ export const searchActivities = async (latitude, longitude, budgetActivity) => {
 
 // Add an activity to the itinerary
 // POST /itinerary/{itineraryId}/activity/{activityId}
-export const addActivityToItinerary = async (itineraryId, activityId) => {
-    const response = await api.post(`/itinerary/${itineraryId}/activity/${activityId}`);
+export const addActivityToItinerary = async (itineraryId, activityObj) => {
+    // First POST request to save the activity and get its ID
+    const activityResponse = await api.post(`/activity/`, activityObj);
+    const savedActivityId = activityResponse.data.id;
+
+    // Second POST request to add the activity to the itinerary using the saved activity ID
+    const response = await api.post(`/itinerary/${itineraryId}/activity/${savedActivityId}`);
     return response.data;
 };
 

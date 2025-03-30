@@ -31,8 +31,9 @@ const SearchActivitiesPage = () => {
         try {
             const chosenActivity = activityOptions[selectedIndex];
             console.log('Adding activity:', { itineraryId, chosenActivity });
-            // chosenActivity has an ID property (like chosenActivity.id)
-            await addActivityToItinerary(itineraryId, chosenActivity.id);
+
+            // Now pass the full activity object to the backend
+            await addActivityToItinerary(itineraryId, chosenActivity);
             alert('Activity added successfully!');
             navigate(`/itinerary/${itineraryId}`);
         } catch (error) {

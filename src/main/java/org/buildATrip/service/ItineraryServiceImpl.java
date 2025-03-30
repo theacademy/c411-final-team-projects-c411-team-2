@@ -118,7 +118,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Transactional
     public Itinerary addActivityToItinerary(int itineraryId, int activityId) {
         Itinerary currentItinerary = itineraryRepo.findById(itineraryId)
-                .orElseThrow(() -> new EntityNotFoundException("Itinenary not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
         Activity newActivity = activityRepo.findById(activityId)
                 .orElseThrow(() -> new EntityNotFoundException("Activity not found"));
 

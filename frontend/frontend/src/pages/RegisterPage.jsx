@@ -1,6 +1,6 @@
-// src/pages/RegisterPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { register } from '../services/authService';
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -11,32 +11,32 @@ const RegisterPage = () => {
         originCity: '',
         dateOfBirth: ''
     });
-
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Registration data:', formData);
-        navigate('/login');
+        try {
+            // Call registration service
+            await register(formData);
+            alert('Registration successful! Please log in.');
+            navigate('/login');
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('Registration failed');
+        }
     };
 
     return (
         <div className="max-w-md mx-auto my-10 p-6 bg-black/50 text-white rounded shadow-md">
             <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-
-            <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-2 gap-4 mb-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block mb-2" htmlFor="firstName">
-                            First Name
-                        </label>
+                        <label className="block mb-2" htmlFor="firstName">First Name</label>
                         <input
                             id="firstName"
                             name="firstName"
@@ -48,9 +48,7 @@ const RegisterPage = () => {
                         />
                     </div>
                     <div>
-                        <label className="block mb-2" htmlFor="lastName">
-                            Last Name
-                        </label>
+                        <label className="block mb-2" htmlFor="lastName">Last Name</label>
                         <input
                             id="lastName"
                             name="lastName"
@@ -62,11 +60,8 @@ const RegisterPage = () => {
                         />
                     </div>
                 </div>
-
-                <div className="mb-4">
-                    <label className="block mb-2" htmlFor="email">
-                        Email
-                    </label>
+                <div>
+                    <label className="block mb-2" htmlFor="email">Email</label>
                     <input
                         id="email"
                         name="email"
@@ -77,11 +72,8 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
-
-                <div className="mb-4">
-                    <label className="block mb-2" htmlFor="password">
-                        Password
-                    </label>
+                <div>
+                    <label className="block mb-2" htmlFor="password">Password</label>
                     <input
                         id="password"
                         name="password"
@@ -92,11 +84,8 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
-
-                <div className="mb-4">
-                    <label className="block mb-2" htmlFor="originCity">
-                        Origin City
-                    </label>
+                <div>
+                    <label className="block mb-2" htmlFor="originCity">Origin City</label>
                     <input
                         id="originCity"
                         name="originCity"
@@ -107,11 +96,8 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
-
-                <div className="mb-6">
-                    <label className="block mb-2" htmlFor="dateOfBirth">
-                        Date of Birth
-                    </label>
+                <div>
+                    <label className="block mb-2" htmlFor="dateOfBirth">Date of Birth</label>
                     <input
                         id="dateOfBirth"
                         name="dateOfBirth"
@@ -122,15 +108,13 @@ const RegisterPage = () => {
                         required
                     />
                 </div>
-
                 <button
                     type="submit"
-                    className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-secondary)] text-white font-bold py-2 px-4 rounded"
+                    className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-secondary)] text-white font-bold py-2 rounded"
                 >
                     Register
                 </button>
             </form>
-
             <div className="mt-4 text-center">
                 <p>
                     Already have an account?{' '}

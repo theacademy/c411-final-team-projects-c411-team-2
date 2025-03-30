@@ -1,6 +1,6 @@
-// src/pages/CreateItineraryPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createItinerary } from '../services/itineraryService';
 
 const CreateItineraryPage = () => {
     const [formData, setFormData] = useState({
@@ -11,132 +11,127 @@ const CreateItineraryPage = () => {
         priceRangeHotel: '',
         priceRangeActivity: ''
     });
-
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Creating itinerary with:', formData);
-        navigate('/itineraries');
+        try {
+            // Get user info from localStorage
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('Please log in first');
+                navigate('/login');
+                return;
+            }
+            // Prepare parameters for /itinerary/create endpoint
+            const itineraryParams = {
+                userId: user.id,
+                numAdults: formData.numAdults,
+                priceRangeFlight: formData.priceRangeFlight || null,
+                priceRangeHotel: formData.priceRangeHotel || null,
+                priceRangeActivity: formData.priceRangeActivity || null,
+                startDate: formData.startDate,
+                endDate: formData.endDate
+            };
+            const createdItinerary = await createItinerary(itineraryParams);
+            navigate(`/itinerary/${createdItinerary.id}`);
+        } catch (error) {
+            console.error('Error creating itinerary:', error);
+            alert('Failed to create itinerary');
+        }
     };
 
     return (
-        <div className="max-w-2xl mx-auto my-8 px-4 text-white">
-            <h1 className="text-3xl font-bold mb-6">Create New Itinerary</h1>
-            <form
-                onSubmit={handleSubmit}
-                className="bg-[var(--color-form-bg)] rounded-lg shadow-md p-6"
-            >
-                <div className="mb-4">
-                    <label className="block mb-2" htmlFor="numAdults">
-                        Number of Travelers
-                    </label>
+        <div className="max-w-md mx-auto my-10 p-6 bg-black/50 text-white rounded shadow-md">
+            <h2 className="text-2xl font-bold mb-6 text-center">Create New Itinerary</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Number of Adults */}
+                <div>
+                    <label className="block mb-2" htmlFor="numAdults">Number of Adults</label>
                     <input
                         id="numAdults"
                         name="numAdults"
                         type="number"
                         min="1"
-                        className="w-full p-2 border border-gray-500 rounded bg-[#555555] text-white"
                         value={formData.numAdults}
                         onChange={handleChange}
+                        className="w-full p-2 border border-gray-500 rounded bg-[#333] text-white"
                         required
                     />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label className="block mb-2" htmlFor="startDate">
-                            Start Date
-                        </label>
-                        <input
-                            id="startDate"
-                            name="startDate"
-                            type="date"
-                            className="w-full p-2 border border-gray-500 rounded bg-[#555555] text-white"
-                            value={formData.startDate}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block mb-2" htmlFor="endDate">
-                            End Date
-                        </label>
-                        <input
-                            id="endDate"
-                            name="endDate"
-                            type="date"
-                            className="w-full p-2 border border-gray-500 rounded bg-[#555555] text-white"
-                            value={formData.endDate}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                {/* Start Date */}
+                <div>
+                    <label className="block mb-2" htmlFor="startDate">Start Date</label>
+                    <input
+                        id="startDate"
+                        name="startDate"
+                        type="date"
+                        value={formData.startDate}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-500 rounded bg-[#333] text-white"
+                        required
+                    />
                 </div>
-
-                <div className="mb-4">
-                    <h3 className="text-lg font-semibold mb-3">Budget Ranges (Optional)</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block mb-2" htmlFor="priceRangeFlight">
-                                Flights Budget ($)
-                            </label>
-                            <input
-                                id="priceRangeFlight"
-                                name="priceRangeFlight"
-                                type="number"
-                                min="0"
-                                className="w-full p-2 border border-gray-500 rounded bg-[#555555] text-white"
-                                value={formData.priceRangeFlight}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block mb-2" htmlFor="priceRangeHotel">
-                                Hotels Budget ($)
-                            </label>
-                            <input
-                                id="priceRangeHotel"
-                                name="priceRangeHotel"
-                                type="number"
-                                min="0"
-                                className="w-full p-2 border border-gray-500 rounded bg-[#555555] text-white"
-                                value={formData.priceRangeHotel}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block mb-2" htmlFor="priceRangeActivity">
-                                Activities Budget ($)
-                            </label>
-                            <input
-                                id="priceRangeActivity"
-                                name="priceRangeActivity"
-                                type="number"
-                                min="0"
-                                className="w-full p-2 border border-gray-500 rounded bg-[#555555] text-white"
-                                value={formData.priceRangeActivity}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
+                {/* End Date */}
+                <div>
+                    <label className="block mb-2" htmlFor="endDate">End Date</label>
+                    <input
+                        id="endDate"
+                        name="endDate"
+                        type="date"
+                        value={formData.endDate}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-500 rounded bg-[#333] text-white"
+                        required
+                    />
                 </div>
-
-                <div className="mt-6">
-                    <button
-                        type="submit"
-                        className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold py-3 px-4 rounded-lg"
-                    >
-                        Create Itinerary
-                    </button>
+                {/* Flight Budget (Optional) */}
+                <div>
+                    <label className="block mb-2" htmlFor="priceRangeFlight">Flight Budget (Optional)</label>
+                    <input
+                        id="priceRangeFlight"
+                        name="priceRangeFlight"
+                        type="number"
+                        min="0"
+                        value={formData.priceRangeFlight}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-500 rounded bg-[#333] text-white"
+                    />
                 </div>
+                {/* Hotel Budget (Optional) */}
+                <div>
+                    <label className="block mb-2" htmlFor="priceRangeHotel">Hotel Budget (Optional)</label>
+                    <input
+                        id="priceRangeHotel"
+                        name="priceRangeHotel"
+                        type="number"
+                        min="0"
+                        value={formData.priceRangeHotel}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-500 rounded bg-[#333] text-white"
+                    />
+                </div>
+                {/* Activity Budget (Optional) */}
+                <div>
+                    <label className="block mb-2" htmlFor="priceRangeActivity">Activity Budget (Optional)</label>
+                    <input
+                        id="priceRangeActivity"
+                        name="priceRangeActivity"
+                        type="number"
+                        min="0"
+                        value={formData.priceRangeActivity}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-500 rounded bg-[#333] text-white"
+                    />
+                </div>
+                {/* Submit Button */}
+                <button type="submit" className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-secondary)] text-white font-bold py-2 rounded">
+                    Create Itinerary
+                </button>
             </form>
         </div>
     );

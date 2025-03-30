@@ -8,12 +8,18 @@ import RegisterPage from './pages/RegisterPage';
 import ItineraryListPage from './pages/ItineraryListPage';
 import CreateItineraryPage from './pages/CreateItineraryPage';
 import ItineraryDetailPage from './pages/ItineraryDetailPage';
-import './index.css'; // or App.css with Tailwind imports
+import SearchFlightsPage from './pages/SearchFlightsPage';
+import SearchReturnFlightsPage from './pages/SearchReturnFlightsPage';
+import SearchDestinationsPage from './pages/SearchDestinationsPage';
+// The new pages:
+import SearchHotelsPage from './pages/SearchHotelsPage';
+import SearchActivitiesPage from './pages/SearchActivitiesPage';
+
+import './index.css';
 
 function App() {
     return (
         <Router>
-            {/* Full-height flex column so footer can stick to bottom if you want */}
             <div className="flex flex-col min-h-screen">
                 <Header />
                 <main className="flex-grow">
@@ -24,6 +30,12 @@ function App() {
                         <Route path="/itineraries" element={<ItineraryListPage />} />
                         <Route path="/create-itinerary" element={<CreateItineraryPage />} />
                         <Route path="/itinerary/:id" element={<ItineraryDetailPage />} />
+                        <Route path="/search-flights/:itineraryId" element={<SearchFlightsPage />} />
+                        <Route path="/search-return-flights/:itineraryId" element={<SearchReturnFlightsPage />} />
+                        <Route path="/search-destinations/:itineraryId" element={<SearchDestinationsPage />} />
+                        {/* New routes */}
+                        <Route path="/search-hotels/:itineraryId" element={<SearchHotelsPage />} />
+                        <Route path="/search-activities/:itineraryId" element={<SearchActivitiesPage />} />
                     </Routes>
                 </main>
                 <Footer />

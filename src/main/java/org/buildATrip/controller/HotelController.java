@@ -38,9 +38,9 @@ public class HotelController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createNewHotel(@RequestBody Hotel hotel) {
-        hotelService.createHotel(hotel);
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+    public ResponseEntity<Hotel> createNewHotel(@RequestBody Hotel hotel) {
+        Hotel createdHotel = hotelService.createHotel(hotel);
+        return new ResponseEntity<>(createdHotel, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

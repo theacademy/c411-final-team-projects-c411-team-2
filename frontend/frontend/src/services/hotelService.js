@@ -5,14 +5,20 @@ import api from './api';
 export const searchHotel = async (params) => {
     // params: { destination, hotelBudget, numberAdults, checkIn, checkOut, boardType }
     const { destination, hotelBudget, ...rest } = params;
+    console.log("rest params is: ", rest);
     const response = await api.get(`/hotel/${destination}/${hotelBudget}`, { params: rest });
     return response.data;
 };
 
 // Add a specific hotel to the itinerary
 // POST /itinerary/{itineraryId}/hotel/{hotelId}
-export const addHotelToItinerary = async (itineraryId, hotelId) => {
-    const response = await api.post(`/itinerary/${itineraryId}/hotel/${hotelId}`);
+export const addHotelToItinerary = async (itineraryId, hotelObj) => {
+    // First POST request to save the hotel and get its ID
+    const hotelResponse = await api.post(`/hotel/`, hotelObj);
+    const savedHotelId = hotelResponse.data.id;
+
+    // Second POST request to add the hotel to the itinerary using the saved hotel ID
+    const response = await api.post(`/itinerary/${itineraryId}/hotel/${savedHotelId}`);
     return response.data;
 };
 

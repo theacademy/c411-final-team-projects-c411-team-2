@@ -234,7 +234,7 @@ public class AmadeusServiceImpl implements AmadeusService {
             for (int i=0; i<maxIteration; i++) {
                 if (rootNode.get("data").get(i).get("available").asText().equals("true")){
                     Hotel hotel = new Hotel();
-
+                    hotel.setHotel_id(i + 1); //adding temp id for frontend selection
                     hotel.setName(rootNode.get("data").get(i).get("hotel").get("name").asText());
                     //currency is not right, taking only the first offer by hotel
                     hotel.setPrice(new BigDecimal(rootNode.get("data").get(i).get("offers").get(0).get("price").get("total").asText()));

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { searchHotel, addHotelToItinerary } from '../services/hotelService';
+import {addActivityToItinerary} from "../services/activityService.js";
 
 const SearchHotelsPage = () => {
     const { itineraryId } = useParams();
@@ -39,8 +40,8 @@ const SearchHotelsPage = () => {
         if (selectedIndex === null) return;
         try {
             const chosenHotel = hotelOptions[selectedIndex];
-            // chosenHotel has an ID property like hotel_id or something
-            await addHotelToItinerary(itineraryId, chosenHotel.hotel_id);
+            // Now pass the full activity object to the backend
+            await addHotelToItinerary(itineraryId, chosenHotel);
             alert('Hotel added successfully!');
             navigate(`/itinerary/${itineraryId}`);
         } catch (error) {

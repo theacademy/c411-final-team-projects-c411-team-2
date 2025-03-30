@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Use Playfair Display (or another elegant serif) */
+:root {
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+
+  /* Color variables */
+  --color-text: #ffffff;         /* White text by default */
+  --color-primary: #3DB2B2;      /* Teal for buttons/links */
+  --color-secondary: #2C9999;    /* Slightly darker teal for hover states */
+  --color-header-footer: #2E2E2E;/* Dark gray for header/footer */
+}
+
+/* Make sure the page fills the viewport and has the background image. */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-serif);
+  background: url('/src/assets/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--color-text);
+}
+
+/* Links default to teal, hover to a darker teal */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--color-secondary);
+}
+
+/* Buttons: teal background, white text, darker teal on hover */
+button {
+  background-color: var(--color-primary);
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+button:hover {
+  background-color: var(--color-secondary);
+}
+
+/* Header/Footer share a dark gray background */
+header,
+footer {
+  width: 100%;
+  background-color: var(--color-header-footer);
+  color: #fff;
+}
+

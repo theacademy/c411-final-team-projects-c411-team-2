@@ -11,14 +11,14 @@ public interface HotelService {
 
     List<Hotel> searchHotel(String cityOriginCode, Integer numberAdults, LocalDate checkIn, LocalDate checkOut, String hotelBudget, BoardType boardType);
 
-    Hotel getHotelById(String id);
+    Hotel getHotelById(Integer id);
 
-    void createHotel(Hotel hotel);
+    Hotel createHotel(Hotel hotel);
 
-    void deleteHotel(String id);
+    void deleteHotel(Integer id);
 
     void deleteAllHotel();
 
-    Hotel findHotelWithItineraryList(String id);
+    Hotel findHotelWithItineraryList(Integer id);
 
 }

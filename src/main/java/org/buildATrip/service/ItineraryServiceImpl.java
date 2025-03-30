@@ -92,7 +92,7 @@ public class ItineraryServiceImpl implements ItineraryService {
 
     @Override
     @Transactional
-    public Itinerary addHotelToItinerary(int itineraryId, String hotelId) {
+    public Itinerary addHotelToItinerary(int itineraryId, Integer hotelId) {
         Itinerary currentItinerary = itineraryRepo.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinenary not found"));
         Hotel newHotel = hotelRepo.findById(hotelId)
@@ -171,7 +171,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     }
 
     @Transactional
-    public void removeHotelFromItinerary(int itineraryId, String hotelId) {
+    public void removeHotelFromItinerary(int itineraryId, int hotelId) {
         Itinerary itinerary = itineraryRepo.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
         Hotel hotel = hotelRepo.findById(hotelId)

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -196,7 +197,7 @@ public class ItineraryController {
 
     // Add a hotel to an itinerary
     @PostMapping("/{itineraryId}/hotel/{hotelId}")
-    public ResponseEntity<Itinerary> addHotelToItinerary(@PathVariable int itineraryId, @PathVariable String hotelId) {
+    public ResponseEntity<Itinerary> addHotelToItinerary(@PathVariable int itineraryId, @PathVariable int hotelId) {
         try {
             Itinerary updatedItinerary = itineraryService.addHotelToItinerary(itineraryId, hotelId);
             return new ResponseEntity<>(updatedItinerary, HttpStatus.OK);
@@ -373,7 +374,7 @@ public class ItineraryController {
 
     // Remove a hotel from an itinerary
     @DeleteMapping("/{itineraryId}/hotel/{hotelId}")
-    public ResponseEntity<Void> removeHotelFromItinerary(@PathVariable int itineraryId, @PathVariable String hotelId) {
+    public ResponseEntity<Void> removeHotelFromItinerary(@PathVariable int itineraryId, @PathVariable int hotelId) {
         try {
             ((ItineraryServiceImpl) itineraryService).removeHotelFromItinerary(itineraryId, hotelId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -508,7 +509,7 @@ public class ItineraryController {
     @PutMapping("/{itineraryId}/hotel/{oldHotelId}")
     public ResponseEntity<Itinerary> replaceHotel(
             @PathVariable int itineraryId,
-            @PathVariable String oldHotelId,
+            @PathVariable int oldHotelId,
             @RequestBody Hotel newHotel) {
         try {
             // 1. Validate the itinerary and hotel exist

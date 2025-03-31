@@ -52,15 +52,6 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Override
     @Transactional
     public Itinerary createItinerary(Itinerary itinerary) {
-        if(itinerary.getPriceRangeActivity() == null) {
-            itinerary.setPriceRangeActivity(new BigDecimal("999999.99"));
-        }
-        if(itinerary.getPriceRangeHotel() == null) {
-            itinerary.setPriceRangeHotel(new BigDecimal("9999999.99"));
-        }
-        if(itinerary.getPriceRangeFlight() == null) {
-            itinerary.setPriceRangeFlight(new BigDecimal("9999999.99"));
-        }
         return itineraryRepo.save(itinerary);
     }
 

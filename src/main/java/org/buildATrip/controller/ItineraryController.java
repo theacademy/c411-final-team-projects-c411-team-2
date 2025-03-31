@@ -244,9 +244,17 @@ public class ItineraryController {
             // Create new itinerary object with the provided parameters
             Itinerary newItinerary = new Itinerary();
             newItinerary.setNumAdults(numAdults);
-            newItinerary.setPriceRangeFlight(priceRangeFlight);
-            newItinerary.setPriceRangeHotel(priceRangeHotel);
-            newItinerary.setPriceRangeActivity(priceRangeActivity);
+
+            newItinerary.setPriceRangeActivity(
+                    priceRangeActivity != null ? priceRangeActivity : new BigDecimal("9999")
+            );
+            newItinerary.setPriceRangeFlight(
+                    priceRangeFlight != null ? priceRangeFlight : new BigDecimal("99999.99")
+            );
+
+            newItinerary.setPriceRangeHotel(
+                    priceRangeHotel != null ? priceRangeHotel : new BigDecimal("99999.99")
+            );
             newItinerary.setConfirmed(false); // Default to not confirmed
             newItinerary.setStartDate(startDate);
             newItinerary.setEndDate(endDate);

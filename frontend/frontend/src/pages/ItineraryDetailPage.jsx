@@ -92,7 +92,7 @@ const ItineraryDetailPage = () => {
                                     <strong>{flight.flightType} Flight:</strong> {flight.originCode?.codeId} → {flight.destinationCode?.codeId}
                                 </p>
                                 <p>Date: {flight.date}</p>
-                                <p>Price: {flight.price}</p>
+                                {flight.price > 0 && <p>Price: {flight.price}</p>}
                             </div>
                         ))}
                     </div>

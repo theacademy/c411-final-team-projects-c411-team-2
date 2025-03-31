@@ -78,6 +78,23 @@ public class AmadeusServiceImplStub implements AmadeusService{
 
     @Override
     public List<Activity> getActivitiesByCoordinates(float latitude, float longitude) {
-        return null;
+
+        Activity activity1 = new Activity();
+        activity1.setName("Skydiving");
+        activity1.setDescription("Jump from a plane and experience freedom.");
+        activity1.setRating(4.8);
+        activity1.setPrice(new BigDecimal("200.0"));
+        activity1.setLatitude(new BigDecimal("40.7128"));
+        activity1.setLongitude(new BigDecimal("-74.0060"));
+
+        Activity activity2 = new Activity();
+        activity2.setName("Scuba Diving");
+        activity2.setDescription("Explore the underwater world.");
+        activity2.setRating(4.5);
+        activity2.setPrice(new BigDecimal("150.0"));
+        activity2.setLatitude(new BigDecimal("40.7128"));
+        activity2.setLongitude(new BigDecimal("-74.0060"));
+
+        return List.of(activity1, activity2);
     }
 }

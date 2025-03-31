@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -141,6 +142,9 @@ public class FlightServiceImpl implements FlightService {
         // Set flight type for all flights
         for (Flight flight : selectedFlights) {
             flight.setFlightType(FLIGHT_TYPE_OUTBOUND);
+            if(flight.getPrice() == null) {
+                flight.setPrice(BigDecimal.ZERO);
+            }
         }
 
         // Save the flights with connections established
@@ -160,6 +164,9 @@ public class FlightServiceImpl implements FlightService {
         // Set flight type for all flights
         for (Flight flight : selectedFlights) {
             flight.setFlightType(FLIGHT_TYPE_RETURN);
+            if(flight.getPrice() == null) {
+                flight.setPrice(BigDecimal.ZERO);
+            }
         }
 
         // Save the flights with connections established

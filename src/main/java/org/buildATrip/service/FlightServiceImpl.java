@@ -164,6 +164,9 @@ public class FlightServiceImpl implements FlightService {
         // Set flight type for all flights
         for (Flight flight : selectedFlights) {
             flight.setFlightType(FLIGHT_TYPE_RETURN);
+            if(flight.getPrice() == null) {
+                flight.setPrice(BigDecimal.ZERO);
+            }
         }
 
         // Save the flights with connections established
